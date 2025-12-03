@@ -1,0 +1,14 @@
+[
+    {
+        "status": "success",
+        "data": [
+            {
+                "city": "Cherkasy"
+            },
+            {
+                "city": "Uman'"
+            }
+        ]
+    },
+    "http://api.airvisual.com/v2/cities?state=Cherkasy&country=Ukraine&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
+]

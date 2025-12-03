@@ -3,111 +3,87 @@
         "status": "success",
         "data": [
             {
-                "state": "Andaman and Nicobar Islands"
+                "state": "Cherkasy"
             },
             {
-                "state": "Andhra Pradesh"
+                "state": "Chernihiv"
             },
             {
-                "state": "Assam"
+                "state": "Chernivtsi"
             },
             {
-                "state": "Bihar"
+                "state": "Dnipro"
             },
             {
-                "state": "Chandigarh"
+                "state": "Donetsk"
             },
             {
-                "state": "Chhattisgarh"
+                "state": "Gorod Sevastopol"
             },
             {
-                "state": "Dadra and Nagar Haveli"
+                "state": "Ivano-Frankivsk"
             },
             {
-                "state": "Daman and Diu"
+                "state": "Kharkiv"
             },
             {
-                "state": "Delhi"
+                "state": "Kherson"
             },
             {
-                "state": "Goa"
+                "state": "Khmelnytskyi"
             },
             {
-                "state": "Gujarat"
+                "state": "Kropyvnytskyi"
             },
             {
-                "state": "Haryana"
+                "state": "Kyiv"
             },
             {
-                "state": "Himachal Pradesh"
+                "state": "Kyiv City"
             },
             {
-                "state": "Jammu and Kashmir"
+                "state": "Luhansk"
             },
             {
-                "state": "Jharkhand"
+                "state": "Lviv"
             },
             {
-                "state": "Karnataka"
+                "state": "Mykolaiv"
             },
             {
-                "state": "Kerala"
+                "state": "Odessa"
             },
             {
-                "state": "Lakshadweep"
+                "state": "Poltava"
             },
             {
-                "state": "Madhya Pradesh"
+                "state": "Republic of Crimea"
             },
             {
-                "state": "Maharashtra"
+                "state": "Rivne"
             },
             {
-                "state": "Manipur"
+                "state": "Sumy"
             },
             {
-                "state": "Meghalaya"
+                "state": "Ternopil"
             },
             {
-                "state": "Mizoram"
+                "state": "Transcarpathia"
             },
             {
-                "state": "Nagaland"
+                "state": "Vinnyts'ka"
             },
             {
-                "state": "Odisha"
+                "state": "Volyn"
             },
             {
-                "state": "Puducherry"
+                "state": "Zaporizhia"
             },
             {
-                "state": "Punjab"
-            },
-            {
-                "state": "Rajasthan"
-            },
-            {
-                "state": "Sikkim"
-            },
-            {
-                "state": "Tamil Nadu"
-            },
-            {
-                "state": "Telangana"
-            },
-            {
-                "state": "Tripura"
-            },
-            {
-                "state": "Uttar Pradesh"
-            },
-            {
-                "state": "Uttarakhand"
-            },
-            {
-                "state": "West Bengal"
+                "state": "Zhytomyr"
             }
         ]
     },
-    "http://api.airvisual.com/v2/states?country=India&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
+    "http://api.airvisual.com/v2/states?country=Ukraine&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
 ]
