@@ -34,7 +34,7 @@ def get_city_data(country_name, state_name, city_name):
     return (response_json, url) if response_json.get("status") == 'success' else print('None')
 
 def main():
-    data = get_supported_cities('Ukraine', 'Cherkasy', "Umon")
+    data = get_city_data('Ukraine', 'Cherkasy', 'Cherkasy')
     if data:
         # Save it to a file
         with open("city_data.json", "w") as f:
