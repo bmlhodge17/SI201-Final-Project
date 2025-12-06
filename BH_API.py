@@ -21,4 +21,11 @@ import sqlite3
 import requests
 import matplotlib.pyplot as plt
 
-#url = 
+#get api url city bikes
+url = "https://api.citybik.es/v2/networks"
+response = requests.get(url)
+data = response.json()
+
+#print(data)
+
+
