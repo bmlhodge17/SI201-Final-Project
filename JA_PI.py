@@ -33,14 +33,14 @@ def get_city_data(country_name, state_name, city_name): #has 3 paramenters
     return (response_json, url) if response_json.get("status") == 'success' else print('None')
 
 def main():
-    data = get_city_data('Ukraine', 'Cherkasy', 'Cherkasy')
+    data = get_supported_cities('South Korea', 'Seoul')
     if data:
         # Save it to a file
-        with open("city_data.json", "w") as f:
+        with open("get_supported_cities.json", "w") as f:
             json.dump(data, f, indent=4)   
-        print("Saved to city_data.json")
+        print("Saved to get_supported_cities.json")
 
 #calls everything
 main()
-print ('hello world')
-print (get_countries_url())
+# print ('hello world')
+# print (get_countries_url())

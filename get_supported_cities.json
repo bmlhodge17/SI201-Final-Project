@@ -1,0 +1,14 @@
+[
+    {
+        "status": "success",
+        "data": [
+            {
+                "city": "Seoul"
+            },
+            {
+                "city": "Yongsan-dong"
+            }
+        ]
+    },
+    "http://api.airvisual.com/v2/cities?state=Seoul&country=South Korea&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
+]
