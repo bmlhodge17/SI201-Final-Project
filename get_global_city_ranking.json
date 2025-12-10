@@ -1,0 +1,9 @@
+[
+    {
+        "status": "fail",
+        "data": {
+            "message": "permission_denied (you don't have access to this endpoint"
+        }
+    },
+    "http://api.airvisual.com/v2/city_ranking?key=9dd604ce-a65f-43e1-9d27-7f87d214a75c&sort=&country=Thailand"
+]

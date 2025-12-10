@@ -32,15 +32,20 @@ def get_city_data(country_name, state_name, city_name): #has 3 paramenters
     response_json = response.json()
     return (response_json, url) if response_json.get("status") == 'success' else print('None')
 
+# def get_global_city_ranking(country_name):
+#     url = f"http://api.airvisual.com/v2/city_ranking?key={API_Key}&sort=&country={country_name}"
+#     response = requests.get(url)
+#     response_json = response.json()
+#     return (response_json, url) if response_json.get("status") == 'success' else print('None')
+
+
 def main():
-    data = get_supported_cities('South Korea', 'Seoul')
+    data = get_global_city_ranking(USA)
     if data:
         # Save it to a file
-        with open("get_supported_cities.json", "w") as f:
+        with open("get_global_city_ranking.json", "w") as f:
             json.dump(data, f, indent=4)   
-        print("Saved to get_supported_cities.json")
+        print("Saved to get_global_city_ranking.json")
 
 #calls everything
 main()
-# print ('hello world')
-# print (get_countries_url())

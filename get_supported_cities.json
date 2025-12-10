@@ -3,12 +3,21 @@
         "status": "success",
         "data": [
             {
-                "city": "Seoul"
+                "city": "Defence Colony"
             },
             {
-                "city": "Yongsan-dong"
+                "city": "Delhi"
+            },
+            {
+                "city": "Deoli"
+            },
+            {
+                "city": "New Delhi"
+            },
+            {
+                "city": "Shahdara"
             }
         ]
     },
-    "http://api.airvisual.com/v2/cities?state=Seoul&country=South Korea&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
+    "http://api.airvisual.com/v2/cities?state=Delhi&country=India&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
 ]
