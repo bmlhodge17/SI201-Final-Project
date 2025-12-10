@@ -4,15 +4,6 @@ import os
 import json
 import requests
 
-'''
-creating tables
-what tables do we want to create? 
-
-- city_id
-- weather?
-- date?
-
-'''
 
 #Bri's tables
 #SQL_Data_base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "SQL_Data_base.db")
@@ -30,7 +21,7 @@ def connect_to_database():
 def create_citybike_tables():
     conn, cur = connect_to_database()
 
-#create city bike tables
+    # ---------- CREATE TABLES ----------
     cur.execute('''
         CREATE TABLE IF NOT EXISTS cities (
             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,34 +61,34 @@ def create_citybike_tables():
 
     conn.commit()
 
- #load data
+    # ---------- LOAD NETWORK LIST ----------
+    print("Loading network list...")
     url = "https://api.citybik.es/v2/networks"
-    response = requests.get(url)
-    data = response.json()
-    networks = data["networks"]
+    networks = requests.get(url).json().get("networks", [])
 
-#add bike networks
+    # ---------- INSERT CITIES + NETWORKS ----------
     for n in networks:
-        api_id = n["id"]
-        network_name = n["name"]
-        loc = n["location"]
+
+        api_id = n.get("id")
+        network_name = n.get("name")
+        loc = n.get("location", {})
 
         city = loc.get("city")
         country = loc.get("country")
         lat = loc.get("latitude")
         lon = loc.get("longitude")
 
-        # Insert city once
+        # Insert city
         cur.execute("""
             INSERT OR IGNORE INTO cities (city_name, country, latitude, longitude)
             VALUES (?, ?, ?, ?)
         """, (city, country, lat, lon))
 
-        # Get city_id
-        cur.execute("SELECT city_id FROM cities WHERE city_name = ?", (city,))
+        # get city_id
+        cur.execute("SELECT city_id FROM cities WHERE city_name=?", (city,))
         city_fk = cur.fetchone()[0]
 
-        # Insert network once
+        # Insert network
         cur.execute("""
             INSERT OR IGNORE INTO networks (api_network_id, network_name, city_id)
             VALUES (?, ?, ?)
@@ -105,20 +96,28 @@ def create_citybike_tables():
 
     conn.commit()
 
-#stations for each bike network
-    for n in networks:
-        api_id = n["id"]
+    # ---------- INSERT STATIONS ----------
+    print("Loading station data from detail endpoints...")
 
-        # Get network_id
-        cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id = ?", (api_id,))
+    for n in networks:
+        api_id = n.get("id")
+
+        # Get foreign keys
+        cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id=?", (api_id,))
         row = cur.fetchone()
         if not row:
             continue
 
         network_fk, city_fk = row
 
-        stations = n.get("stations", [])
-        if not stations:
+        detail_url = f"https://api.citybik.es/v2/networks/{api_id}"
+
+        try:
+            detail_data = requests.get(detail_url).json()
+            stations = detail_data.get("network", {}).get("stations", [])
+
+        except Exception as e:
+            print("Error fetching stations for", api_id, e)
             continue
 
         for s in stations:
@@ -142,7 +141,9 @@ def create_citybike_tables():
 
     conn.commit()
     conn.close()
-    #print("CityBikes tables created and populated with API data")
+
+    print("CityBikes data successfully loaded!")
+
 
 
 #Asiah's tables
