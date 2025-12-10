@@ -40,6 +40,41 @@ def networks_per_country():
     return results
 
 
+#jasmines calculation
+# Calculate Average food from sql data base for each city
+
+
+
+def calculate_average_food_scores(db_path="SQL_Data_base.db"):
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # Select the fields you want to average
+    cur.execute("""
+        SELECT city_name, inexpensive_meal, meal_for_two, mcdonalds_meal,
+               domestic_beer, imported_beer, cappuccino, coke
+        FROM city_food_costs
+    """)
+#collects the results in a new list 
+    results = []
+    rows = cur.fetchall()
+
+    for row in rows:
+        city_name = row[0]
+
+        # Extract all the cost values as a list of floats
+        costs = [value for value in row[1:] if value is not None]
+
+        # Safeguard if a city has no valid numbers
+        if len(costs) == 0:
+            avg_score = None
+        else:
+            avg_score = round(sum(costs) / len(costs))
+
+        results.append((city_name, avg_score))
+
+    conn.close()
+    return results
 
 
 
@@ -53,7 +88,9 @@ def main():
 
 
     #jasmine calculation call
-
+    data = calculate_average_food_scores()
+    for row in data:
+        print(row)
 
 
 if __name__ == "__main__":
