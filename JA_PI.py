@@ -31,3 +31,7 @@ with open(csv_file, mode='r', encoding='utf-8') as f:
 with open(json_file, mode='w', encoding='utf-8') as f:
     json.dump(data, f, indent=4)
 
+#creating tables 
+#1 table for cities and their id 
+#2 create a table for food - tomato, 
+

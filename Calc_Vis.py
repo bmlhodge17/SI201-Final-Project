@@ -14,39 +14,40 @@ def get_connection():
 
 
 # Bri CALCULATION 1 for Citybikes API
-# Calculate Average free bikes per city at their stations
+# Calculate Average 
+from SQL_Data_base import connect_to_database
 
-def calc_average_free_bikes():
-    conn, cur = get_connection()
+def networks_per_country():
+    """
+    Returns a list of (country, count_of_networks)
+    sorted by most to least networks.
+    """
+
+    conn, cur = connect_to_database()
 
     query = """
-        SELECT 
-            c.city_name,
-            AVG(s.free_bikes) AS avg_free_bikes
-        FROM stations s
-        JOIN networks n ON s.network_id = n.network_id
-        JOIN cities c ON n.city_id = c.city_id
-        GROUP BY c.city_id
-        ORDER BY avg_free_bikes DESC;
+        SELECT country, COUNT(*) as num_networks
+        FROM cities
+        WHERE country IS NOT NULL
+        GROUP BY country
+        ORDER BY num_networks DESC;
     """
 
     cur.execute(query)
     results = cur.fetchall()
-    conn.close()
 
+    conn.close()
     return results
+
 
 
 
 
 def main():
     #bri calculation call in main
-    results = calc_average_free_bikes()
-
-    print("Average Number of Free Bikes per City:")
-    
-    for city, avg_bikes in results:
-        print(f"{city}: {avg_bikes:.2f}")
+    data = networks_per_country()
+    for row in data[:15]:
+        print(row)
 
     #asiah calculation call
 

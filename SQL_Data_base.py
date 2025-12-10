@@ -414,6 +414,63 @@ def create_weather_tables():
     conn.close()
 
 print("Database created")
+
+#kaggle function 
+
+#city id, city name, and food 
+with open("cities_living_cost.json", "r") as f:
+    data = json.load(f)
+
+conn = sqlite3.connect("SQL_Data_base.db")
+cur = conn.cursor()
+
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS city_food_costs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        city_name TEXT,
+        cost_index REAL,
+        inexpensive_meal REAL,
+        meal_for_two REAL,
+        mcdonalds_meal REAL,
+        domestic_beer REAL,
+        imported_beer REAL,
+        cappuccino REAL,
+        coke REAL
+    )
+""")
+for city in data:
+    city_name = city.get("City")
+    index = float(city.get("Cost_index", 0))
+
+    cheap_meal = float(city.get("Meal, Inexpensive Restaurant", 0))
+    meal_for_two = float(city.get("Meal for 2 People, Mid-range Restaurant, Three-course", 0))
+    mcd = float(city.get("McMeal at McDonalds (or Equivalent Combo Meal)", 0))
+    domestic_beer = float(city.get("Domestic Beer (0.5 liter draught)", 0))
+    imported_beer = float(city.get("Imported Beer (0.33 liter bottle)", 0))
+    cappuccino = float(city.get("Cappuccino (regular)", 0))
+    coke = float(city.get("Coke/Pepsi (0.33 liter bottle)", 0))
+
+    cur.execute("""
+        INSERT INTO city_food_costs
+        (city_name, cost_index, inexpensive_meal, meal_for_two, mcdonalds_meal,
+         domestic_beer, imported_beer, cappuccino, coke)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (city_name, index, cheap_meal, meal_for_two, mcd,
+          domestic_beer, imported_beer, cappuccino, coke))
+
+
+# def cost_food_table():
+#     conn, cur = connect_to_database()
+#     json_path = os.path.join(BASE_DIR, "cities_living_cost.json")
+
+#     with open(json_path, "r") as f:
+#         data = json.load(f)
+
+#     cities = data["cities"]
+
+
+#     conn = sqlite3.connect(SQL_Data_base)
+#     cur = conn.cursor()
    
 
 
