@@ -1,0 +1,562 @@
+{
+    "cities": [
+        {
+            "city_id": 1,
+            "city_name": "New York",
+            "request": {
+                "type": "City",
+                "query": "New York, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "New York",
+                "country": "United States of America",
+                "region": "New York",
+                "lat": "40.714",
+                "lon": "-74.006",
+                "timezone_id": "America/New_York",
+                "localtime": "2025-12-09 20:33",
+                "localtime_epoch": 1765312380,
+                "utc_offset": "-5.0"
+            },
+            "current": {
+                "observation_time": "01:33 AM",
+                "temperature": 1,
+                "weather_code": 113,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0008_clear_sky_night.png"
+                ],
+                "weather_descriptions": [
+                    "Clear "
+                ],
+                "astro": {
+                    "sunrise": "07:09 AM",
+                    "sunset": "04:28 PM",
+                    "moonrise": "09:53 PM",
+                    "moonset": "11:17 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "199.85",
+                    "no2": "19.65",
+                    "o3": "55",
+                    "so2": "6.85",
+                    "pm2_5": "8.05",
+                    "pm10": "8.55",
+                    "us-epa-index": "1",
+                    "gb-defra-index": "1"
+                },
+                "wind_speed": 22,
+                "wind_degree": 206,
+                "wind_dir": "SSW",
+                "pressure": 1016,
+                "precip": 0,
+                "humidity": 49,
+                "cloudcover": 0,
+                "feelslike": -5,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=New York"
+        },
+        {
+            "city_id": 2,
+            "city_name": "Los Angeles",
+            "request": {
+                "type": "City",
+                "query": "Los Angeles, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "Los Angeles",
+                "country": "United States of America",
+                "region": "California",
+                "lat": "34.052",
+                "lon": "-118.243",
+                "timezone_id": "America/Los_Angeles",
+                "localtime": "2025-12-09 17:37",
+                "localtime_epoch": 1765301820,
+                "utc_offset": "-8.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 24,
+                "weather_code": 113,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0008_clear_sky_night.png"
+                ],
+                "weather_descriptions": [
+                    "Clear "
+                ],
+                "astro": {
+                    "sunrise": "06:47 AM",
+                    "sunset": "04:44 PM",
+                    "moonrise": "10:09 PM",
+                    "moonset": "11:05 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "319.85",
+                    "no2": "64.45",
+                    "o3": "1",
+                    "so2": "10.65",
+                    "pm2_5": "23.35",
+                    "pm10": "23.35",
+                    "us-epa-index": "2",
+                    "gb-defra-index": "2"
+                },
+                "wind_speed": 6,
+                "wind_degree": 244,
+                "wind_dir": "WSW",
+                "pressure": 1015,
+                "precip": 0,
+                "humidity": 27,
+                "cloudcover": 0,
+                "feelslike": 25,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=Los Angeles"
+        },
+        {
+            "city_id": 3,
+            "city_name": "Chicago",
+            "request": {
+                "type": "City",
+                "query": "Chicago, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "Chicago",
+                "country": "United States of America",
+                "region": "Illinois",
+                "lat": "41.850",
+                "lon": "-87.650",
+                "timezone_id": "America/Chicago",
+                "localtime": "2025-12-09 19:37",
+                "localtime_epoch": 1765309020,
+                "utc_offset": "-6.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 2,
+                "weather_code": 266,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0033_cloudy_with_light_rain_night.png"
+                ],
+                "weather_descriptions": [
+                    "Light Drizzle, Mist"
+                ],
+                "astro": {
+                    "sunrise": "07:07 AM",
+                    "sunset": "04:19 PM",
+                    "moonrise": "09:49 PM",
+                    "moonset": "11:15 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "192.85",
+                    "no2": "11.95",
+                    "o3": "53",
+                    "so2": "2.65",
+                    "pm2_5": "8.55",
+                    "pm10": "8.75",
+                    "us-epa-index": "1",
+                    "gb-defra-index": "1"
+                },
+                "wind_speed": 17,
+                "wind_degree": 193,
+                "wind_dir": "SSW",
+                "pressure": 1001,
+                "precip": 0,
+                "humidity": 82,
+                "cloudcover": 100,
+                "feelslike": -2,
+                "uv_index": 0,
+                "visibility": 10,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=Chicago"
+        },
+        {
+            "city_id": 5,
+            "city_name": "Phoenix",
+            "request": {
+                "type": "City",
+                "query": "Phoenix, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "Phoenix",
+                "country": "United States of America",
+                "region": "Arizona",
+                "lat": "33.448",
+                "lon": "-112.073",
+                "timezone_id": "America/Phoenix",
+                "localtime": "2025-12-09 18:37",
+                "localtime_epoch": 1765305420,
+                "utc_offset": "-7.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 22,
+                "weather_code": 113,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0008_clear_sky_night.png"
+                ],
+                "weather_descriptions": [
+                    "Clear "
+                ],
+                "astro": {
+                    "sunrise": "07:21 AM",
+                    "sunset": "05:21 PM",
+                    "moonrise": "10:44 PM",
+                    "moonset": "11:39 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "705.85",
+                    "no2": "54.65",
+                    "o3": "4",
+                    "so2": "10.55",
+                    "pm2_5": "32.35",
+                    "pm10": "36.05",
+                    "us-epa-index": "2",
+                    "gb-defra-index": "2"
+                },
+                "wind_speed": 4,
+                "wind_degree": 307,
+                "wind_dir": "NW",
+                "pressure": 1015,
+                "precip": 0,
+                "humidity": 23,
+                "cloudcover": 25,
+                "feelslike": 22,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=Phoenix"
+        },
+        {
+            "city_id": 6,
+            "city_name": "Philadelphia",
+            "request": {
+                "type": "City",
+                "query": "Philadelphia, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "Philadelphia",
+                "country": "United States of America",
+                "region": "Pennsylvania",
+                "lat": "39.952",
+                "lon": "-75.164",
+                "timezone_id": "America/New_York",
+                "localtime": "2025-12-09 20:37",
+                "localtime_epoch": 1765312620,
+                "utc_offset": "-5.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 1,
+                "weather_code": 122,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0004_black_low_cloud.png"
+                ],
+                "weather_descriptions": [
+                    "Overcast"
+                ],
+                "astro": {
+                    "sunrise": "07:11 AM",
+                    "sunset": "04:35 PM",
+                    "moonrise": "09:59 PM",
+                    "moonset": "11:20 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "193.85",
+                    "no2": "14.15",
+                    "o3": "58",
+                    "so2": "7.05",
+                    "pm2_5": "10.15",
+                    "pm10": "10.75",
+                    "us-epa-index": "1",
+                    "gb-defra-index": "1"
+                },
+                "wind_speed": 11,
+                "wind_degree": 183,
+                "wind_dir": "S",
+                "pressure": 1017,
+                "precip": 0,
+                "humidity": 61,
+                "cloudcover": 100,
+                "feelslike": -3,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=Philadelphia"
+        },
+        {
+            "city_id": 7,
+            "city_name": "San Antonio",
+            "request": {
+                "type": "City",
+                "query": "San Antonio, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "San Antonio",
+                "country": "United States of America",
+                "region": "Texas",
+                "lat": "29.424",
+                "lon": "-98.493",
+                "timezone_id": "America/Chicago",
+                "localtime": "2025-12-09 19:37",
+                "localtime_epoch": 1765309020,
+                "utc_offset": "-6.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 16,
+                "weather_code": 113,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0008_clear_sky_night.png"
+                ],
+                "weather_descriptions": [
+                    "Clear "
+                ],
+                "astro": {
+                    "sunrise": "07:17 AM",
+                    "sunset": "05:36 PM",
+                    "moonrise": "10:53 PM",
+                    "moonset": "11:37 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "217.85",
+                    "no2": "18.35",
+                    "o3": "50",
+                    "so2": "3.35",
+                    "pm2_5": "7.75",
+                    "pm10": "7.85",
+                    "us-epa-index": "1",
+                    "gb-defra-index": "1"
+                },
+                "wind_speed": 13,
+                "wind_degree": 176,
+                "wind_dir": "S",
+                "pressure": 1015,
+                "precip": 0,
+                "humidity": 39,
+                "cloudcover": 0,
+                "feelslike": 16,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=San Antonio"
+        },
+        {
+            "city_id": 8,
+            "city_name": "San Diego",
+            "request": {
+                "type": "City",
+                "query": "San Diego, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "San Diego",
+                "country": "United States of America",
+                "region": "California",
+                "lat": "32.715",
+                "lon": "-117.156",
+                "timezone_id": "America/Los_Angeles",
+                "localtime": "2025-12-09 17:37",
+                "localtime_epoch": 1765301820,
+                "utc_offset": "-8.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 22,
+                "weather_code": 113,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0008_clear_sky_night.png"
+                ],
+                "weather_descriptions": [
+                    "Clear "
+                ],
+                "astro": {
+                    "sunrise": "06:39 AM",
+                    "sunset": "04:43 PM",
+                    "moonrise": "10:06 PM",
+                    "moonset": "10:58 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "631.85",
+                    "no2": "52.75",
+                    "o3": "0",
+                    "so2": "5.85",
+                    "pm2_5": "28.55",
+                    "pm10": "28.75",
+                    "us-epa-index": "2",
+                    "gb-defra-index": "2"
+                },
+                "wind_speed": 11,
+                "wind_degree": 332,
+                "wind_dir": "NNW",
+                "pressure": 1015,
+                "precip": 0,
+                "humidity": 31,
+                "cloudcover": 0,
+                "feelslike": 22,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=San Diego"
+        },
+        {
+            "city_id": 9,
+            "city_name": "Dallas",
+            "request": {
+                "type": "City",
+                "query": "Dallas, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "Dallas",
+                "country": "United States of America",
+                "region": "Texas",
+                "lat": "32.783",
+                "lon": "-96.800",
+                "timezone_id": "America/Chicago",
+                "localtime": "2025-12-09 19:35",
+                "localtime_epoch": 1765308900,
+                "utc_offset": "-6.0"
+            },
+            "current": {
+                "observation_time": "01:35 AM",
+                "temperature": 15,
+                "weather_code": 116,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0004_black_low_cloud.png"
+                ],
+                "weather_descriptions": [
+                    "Partly cloudy"
+                ],
+                "astro": {
+                    "sunrise": "07:18 AM",
+                    "sunset": "05:21 PM",
+                    "moonrise": "10:41 PM",
+                    "moonset": "11:35 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "212.85",
+                    "no2": "17.75",
+                    "o3": "57",
+                    "so2": "4.05",
+                    "pm2_5": "5.75",
+                    "pm10": "5.75",
+                    "us-epa-index": "1",
+                    "gb-defra-index": "1"
+                },
+                "wind_speed": 20,
+                "wind_degree": 182,
+                "wind_dir": "S",
+                "pressure": 1013,
+                "precip": 0,
+                "humidity": 41,
+                "cloudcover": 75,
+                "feelslike": 15,
+                "uv_index": 0,
+                "visibility": 16,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=Dallas"
+        },
+        {
+            "city_id": 10,
+            "city_name": "San Jose",
+            "request": {
+                "type": "City",
+                "query": "San Jose, United States of America",
+                "language": "en",
+                "unit": "m"
+            },
+            "location": {
+                "name": "San Jose",
+                "country": "United States of America",
+                "region": "California",
+                "lat": "37.339",
+                "lon": "-121.894",
+                "timezone_id": "America/Los_Angeles",
+                "localtime": "2025-12-09 17:37",
+                "localtime_epoch": 1765301820,
+                "utc_offset": "-8.0"
+            },
+            "current": {
+                "observation_time": "01:37 AM",
+                "temperature": 11,
+                "weather_code": 143,
+                "weather_icons": [
+                    "https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0006_mist.png"
+                ],
+                "weather_descriptions": [
+                    "Haze"
+                ],
+                "astro": {
+                    "sunrise": "07:11 AM",
+                    "sunset": "04:50 PM",
+                    "moonrise": "10:19 PM",
+                    "moonset": "11:25 AM",
+                    "moon_phase": "Waning Gibbous",
+                    "moon_illumination": 78
+                },
+                "air_quality": {
+                    "co": "298.85",
+                    "no2": "56.05",
+                    "o3": "7",
+                    "so2": "9.75",
+                    "pm2_5": "29.45",
+                    "pm10": "29.75",
+                    "us-epa-index": "2",
+                    "gb-defra-index": "2"
+                },
+                "wind_speed": 7,
+                "wind_degree": 327,
+                "wind_dir": "NNW",
+                "pressure": 1022,
+                "precip": 0,
+                "humidity": 80,
+                "cloudcover": 0,
+                "feelslike": 11,
+                "uv_index": 0,
+                "visibility": 10,
+                "is_day": "no"
+            },
+            "weatherstack_url": "http://api.weatherstack.com/current?access_key=b4e833d38c9ea664b0cd9c76f2c84a6f&query=San Jose"
+        }
+    ]
+}
