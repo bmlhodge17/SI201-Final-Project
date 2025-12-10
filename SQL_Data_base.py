@@ -417,8 +417,13 @@ print("Database created")
 #kaggle function 
 
 #city id, city name, and food 
+print("Current working directory:", os.getcwd())
+print("JSON exists:", os.path.exists("cities_living_cost.json"))
+
 with open("cities_living_cost.json", "r") as f:
     data = json.load(f)
+
+print("Number of cities loaded:", len(data))
 
 conn = sqlite3.connect("SQL_Data_base.db")
 cur = conn.cursor()
@@ -437,7 +442,10 @@ cur.execute("""
         coke REAL
     )
 """)
+
 for city in data:
+    print("Inserting:", city.get("City"))
+
     city_name = city.get("City")
     index = float(city.get("Cost_index", 0))
 
@@ -456,20 +464,12 @@ for city in data:
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (city_name, index, cheap_meal, meal_for_two, mcd,
           domestic_beer, imported_beer, cappuccino, coke))
+#city 
+conn.commit()
+conn.close()
 
+print("Done!")
 
-# def cost_food_table():
-#     conn, cur = connect_to_database()
-#     json_path = os.path.join(BASE_DIR, "cities_living_cost.json")
-
-#     with open(json_path, "r") as f:
-#         data = json.load(f)
-
-#     cities = data["cities"]
-
-
-#     conn = sqlite3.connect(SQL_Data_base)
-#     cur = conn.cursor()
    
 
 
