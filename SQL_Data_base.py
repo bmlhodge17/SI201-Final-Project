@@ -1,5 +1,6 @@
 import unittest
 import sqlite3
+import os
 
 '''
 creating tables
@@ -10,7 +11,7 @@ what tables do we want to create?
 - date?
 
 '''
-SQL_Data_base = 'SQL_Data_base.db'
+SQL_Data_base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "SQL_Data_base.db")
 #.py file creates our .db file
 
 def connect_to_database():
