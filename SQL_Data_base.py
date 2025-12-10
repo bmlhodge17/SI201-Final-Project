@@ -68,6 +68,7 @@ def create_citybike_tables():
 
     conn.commit()
     conn.close()
+    
 
 
 def main():
