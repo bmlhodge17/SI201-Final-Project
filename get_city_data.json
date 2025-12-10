@@ -2,36 +2,36 @@
     {
         "status": "success",
         "data": {
-            "city": "New York",
-            "state": "New York",
-            "country": "USA",
+            "city": "New Delhi",
+            "state": "Delhi",
+            "country": "India",
             "location": {
                 "type": "Point",
                 "coordinates": [
-                    -73.9386769,
-                    40.6627117
+                    77.231,
+                    28.656
                 ]
             },
             "current": {
                 "pollution": {
-                    "ts": "2025-12-09T18:00:00.000Z",
-                    "aqius": 27,
-                    "mainus": "n2",
-                    "aqicn": 28,
-                    "maincn": "n2"
+                    "ts": "2025-12-10T00:00:00.000Z",
+                    "aqius": 191,
+                    "mainus": "p2",
+                    "aqicn": 148,
+                    "maincn": "p2"
                 },
                 "weather": {
-                    "ts": "2025-12-09T18:00:00.000Z",
-                    "ic": "01d",
-                    "hu": 47,
-                    "pr": 1021,
-                    "tp": 0,
-                    "wd": 180,
-                    "ws": 4.12,
-                    "heatIndex": 0
+                    "ts": "2025-12-10T00:00:00.000Z",
+                    "ic": "50n",
+                    "hu": 76,
+                    "pr": 1017,
+                    "tp": 11,
+                    "wd": 240,
+                    "ws": 1.54,
+                    "heatIndex": 11
                 }
             }
         }
     },
-    "http://api.airvisual.com/v2/city?city=New York&state=New York&country=USA&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
+    "http://api.airvisual.com/v2/city?city=New Delhi&state=Delhi&country=India&key=9dd604ce-a65f-43e1-9d27-7f87d214a75c"
 ]

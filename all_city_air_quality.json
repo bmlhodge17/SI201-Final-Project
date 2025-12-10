@@ -1,0 +1,767 @@
+[
+    {
+        "city": "New York",
+        "state": "New York",
+        "country": "USA",
+        "air_quality": {
+            "status": "success",
+            "data": {
+                "city": "New York",
+                "state": "New York",
+                "country": "USA",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        -73.9386769,
+                        40.6627117
+                    ]
+                },
+                "current": {
+                    "pollution": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "aqius": 22,
+                        "mainus": "p2",
+                        "aqicn": 12,
+                        "maincn": "o3"
+                    },
+                    "weather": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "ic": "01n",
+                        "hu": 63,
+                        "pr": 1016,
+                        "tp": 0,
+                        "wd": 230,
+                        "ws": 5.66,
+                        "heatIndex": 0
+                    }
+                }
+            }
+        }
+    },
+    {
+        "city": "Los Angeles",
+        "state": "California",
+        "country": "USA",
+        "air_quality": {
+            "status": "success",
+            "data": {
+                "city": "Los Angeles",
+                "state": "California",
+                "country": "USA",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        -118.4108248,
+                        34.0193936
+                    ]
+                },
+                "current": {
+                    "pollution": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "aqius": 23,
+                        "mainus": "p2",
+                        "aqicn": 25,
+                        "maincn": "p1"
+                    },
+                    "weather": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "ic": "01n",
+                        "hu": 54,
+                        "pr": 1015,
+                        "tp": 19,
+                        "wd": 250,
+                        "ws": 3.6,
+                        "heatIndex": 19
+                    }
+                }
+            }
+        }
+    },
+    {
+        "city": "Chicago",
+        "state": "Illinois",
+        "country": "USA",
+        "air_quality": {
+            "status": "success",
+            "data": {
+                "city": "Chicago",
+                "state": "Illinois",
+                "country": "USA",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        -87.6849386,
+                        41.8370453
+                    ]
+                },
+                "current": {
+                    "pollution": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "aqius": 62,
+                        "mainus": "p2",
+                        "aqicn": 21,
+                        "maincn": "p2"
+                    },
+                    "weather": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "ic": "10n",
+                        "hu": 92,
+                        "pr": 999,
+                        "tp": 2,
+                        "wd": 176,
+                        "ws": 4.47,
+                        "heatIndex": 2
+                    }
+                }
+            }
+        }
+    },
+    {
+        "city": "Houston",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": {
+            "status": "success",
+            "data": {
+                "city": "Houston",
+                "state": "Texas",
+                "country": "USA",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        -95.3888059,
+                        29.7857435
+                    ]
+                },
+                "current": {
+                    "pollution": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "aqius": 42,
+                        "mainus": "p2",
+                        "aqicn": 23,
+                        "maincn": "p1"
+                    },
+                    "weather": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "ic": "01n",
+                        "hu": 81,
+                        "pr": 1017,
+                        "tp": 12,
+                        "wd": 160,
+                        "ws": 5.66,
+                        "heatIndex": 12
+                    }
+                }
+            }
+        }
+    },
+    {
+        "city": "Phoenix",
+        "state": "Arizona",
+        "country": "USA",
+        "air_quality": {
+            "status": "success",
+            "data": {
+                "city": "Phoenix",
+                "state": "Arizona",
+                "country": "USA",
+                "location": {
+                    "type": "Point",
+                    "coordinates": [
+                        -112.0901324,
+                        33.5721544
+                    ]
+                },
+                "current": {
+                    "pollution": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "aqius": 42,
+                        "mainus": "n2",
+                        "aqicn": 42,
+                        "maincn": "n2"
+                    },
+                    "weather": {
+                        "ts": "2025-12-10T02:00:00.000Z",
+                        "ic": "02n",
+                        "hu": 36,
+                        "pr": 1015,
+                        "tp": 17,
+                        "wd": 0,
+                        "ws": 0,
+                        "heatIndex": 17
+                    }
+                }
+            }
+        }
+    },
+    {
+        "city": "Philadelphia",
+        "state": "Pennsylvania",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "San Antonio",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "San Diego",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Dallas",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "San Jose",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Austin",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Jacksonville",
+        "state": "Florida",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Fort Worth",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Columbus",
+        "state": "Ohio",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Charlotte",
+        "state": "North Carolina",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "San Francisco",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Indianapolis",
+        "state": "Indiana",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Seattle",
+        "state": "Washington",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Denver",
+        "state": "Colorado",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Washington",
+        "state": "District of Columbia",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Boston",
+        "state": "Massachusetts",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "El Paso",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Nashville",
+        "state": "Tennessee",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Detroit",
+        "state": "Michigan",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Oklahoma City",
+        "state": "Oklahoma",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Portland",
+        "state": "Oregon",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Las Vegas",
+        "state": "Nevada",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Memphis",
+        "state": "Tennessee",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Louisville",
+        "state": "Kentucky",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Baltimore",
+        "state": "Maryland",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Milwaukee",
+        "state": "Wisconsin",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Albuquerque",
+        "state": "New Mexico",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Tucson",
+        "state": "Arizona",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Fresno",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Sacramento",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Mesa",
+        "state": "Arizona",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Kansas City",
+        "state": "Missouri",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Atlanta",
+        "state": "Georgia",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Omaha",
+        "state": "Nebraska",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Colorado Springs",
+        "state": "Colorado",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Raleigh",
+        "state": "North Carolina",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Miami",
+        "state": "Florida",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Long Beach",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Virginia Beach",
+        "state": "Virginia",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Oakland",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Minneapolis",
+        "state": "Minnesota",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Tulsa",
+        "state": "Oklahoma",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Arlington",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Tampa",
+        "state": "Florida",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "New Orleans",
+        "state": "Louisiana",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Wichita",
+        "state": "Kansas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Cleveland",
+        "state": "Ohio",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Bakersfield",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Aurora",
+        "state": "Colorado",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Anaheim",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Honolulu",
+        "state": "Hawaii",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Corpus Christi",
+        "state": "Texas",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Lexington",
+        "state": "Kentucky",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Stockton",
+        "state": "California",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Henderson",
+        "state": "Nevada",
+        "country": "USA",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Toronto",
+        "state": "Ontario",
+        "country": "Canada",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Vancouver",
+        "state": "British Columbia",
+        "country": "Canada",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Mexico City",
+        "state": "Mexico City",
+        "country": "Mexico",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "S\u00e3o Paulo",
+        "state": "Sao Paulo",
+        "country": "Brazil",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Buenos Aires",
+        "state": "Buenos Aires",
+        "country": "Argentina",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "London",
+        "state": "England",
+        "country": "United Kingdom",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Paris",
+        "state": "Ile-de-France",
+        "country": "France",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Berlin",
+        "state": "Berlin",
+        "country": "Germany",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Madrid",
+        "state": "Madrid",
+        "country": "Spain",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Rome",
+        "state": "Lazio",
+        "country": "Italy",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Amsterdam",
+        "state": "North Holland",
+        "country": "Netherlands",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Dublin",
+        "state": "Leinster",
+        "country": "Ireland",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Zurich",
+        "state": "Zurich",
+        "country": "Switzerland",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Vienna",
+        "state": "Vienna",
+        "country": "Austria",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Prague",
+        "state": "Prague",
+        "country": "Czechia",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Warsaw",
+        "state": "Mazovia",
+        "country": "Poland",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Stockholm",
+        "state": "Stockholm",
+        "country": "Sweden",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Oslo",
+        "state": "Oslo",
+        "country": "Norway",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Copenhagen",
+        "state": "Capital Region",
+        "country": "Denmark",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Reykjavik",
+        "state": "Capital Region",
+        "country": "Iceland",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Tokyo",
+        "state": "Tokyo",
+        "country": "Japan",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Seoul",
+        "state": "Seoul",
+        "country": "South Korea",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Beijing",
+        "state": "Beijing",
+        "country": "China",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Shanghai",
+        "state": "Shanghai",
+        "country": "China",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Hong Kong",
+        "state": "Hong Kong",
+        "country": "Hong Kong",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Singapore",
+        "state": "Singapore",
+        "country": "Singapore",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Bangkok",
+        "state": "Bangkok",
+        "country": "Thailand",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Manila",
+        "state": "Metro Manila",
+        "country": "Philippines",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Jakarta",
+        "state": "Jakarta",
+        "country": "Indonesia",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "New Delhi",
+        "state": "Delhi",
+        "country": "India",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "country": "India",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Dubai",
+        "state": "Dubai",
+        "country": "UAE",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Riyadh",
+        "state": "Riyadh",
+        "country": "Saudi Arabia",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Istanbul",
+        "state": "Istanbul",
+        "country": "Turkey",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Cairo",
+        "state": "Cairo",
+        "country": "Egypt",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Cape Town",
+        "state": "Western Cape",
+        "country": "South Africa",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Nairobi",
+        "state": "Nairobi",
+        "country": "Kenya",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Sydney",
+        "state": "New South Wales",
+        "country": "Australia",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Melbourne",
+        "state": "Victoria",
+        "country": "Australia",
+        "air_quality": "No Data Returned"
+    },
+    {
+        "city": "Auckland",
+        "state": "Auckland",
+        "country": "New Zealand",
+        "air_quality": "No Data Returned"
+    }
+]
