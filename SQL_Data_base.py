@@ -2,6 +2,7 @@ import unittest
 import sqlite3
 import os
 import json
+import requests
 
 '''
 creating tables
@@ -25,26 +26,23 @@ def connect_to_database():
 
     return conn, cur
 
-#Create citybike tables
+
 def create_citybike_tables():
     conn, cur = connect_to_database()
 
-#cities table
+#create city bike tables
     cur.execute('''
-            CREATE TABLE IF NOT EXISTS cities (
+        CREATE TABLE IF NOT EXISTS cities (
             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
             city_name TEXT UNIQUE,
             country TEXT,
             latitude REAL,
             longitude REAL
         );
-
     ''')
 
-
-#networks table (Citybikes/biking networks)
     cur.execute('''
-            CREATE TABLE IF NOT EXISTS networks (
+        CREATE TABLE IF NOT EXISTS networks (
             network_id INTEGER PRIMARY KEY AUTOINCREMENT,
             api_network_id TEXT UNIQUE,
             network_name TEXT,
@@ -53,7 +51,6 @@ def create_citybike_tables():
         );
     ''')
 
-#stations table
     cur.execute('''
         CREATE TABLE IF NOT EXISTS stations (
             station_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,9 +68,82 @@ def create_citybike_tables():
         );
     ''')
 
+    conn.commit()
+
+ #load data
+    url = "https://api.citybik.es/v2/networks"
+    response = requests.get(url)
+    data = response.json()
+    networks = data["networks"]
+
+#add bike networks
+    for n in networks:
+        api_id = n["id"]
+        network_name = n["name"]
+        loc = n["location"]
+
+        city = loc.get("city")
+        country = loc.get("country")
+        lat = loc.get("latitude")
+        lon = loc.get("longitude")
+
+        # Insert city once
+        cur.execute("""
+            INSERT OR IGNORE INTO cities (city_name, country, latitude, longitude)
+            VALUES (?, ?, ?, ?)
+        """, (city, country, lat, lon))
+
+        # Get city_id
+        cur.execute("SELECT city_id FROM cities WHERE city_name = ?", (city,))
+        city_fk = cur.fetchone()[0]
+
+        # Insert network once
+        cur.execute("""
+            INSERT OR IGNORE INTO networks (api_network_id, network_name, city_id)
+            VALUES (?, ?, ?)
+        """, (api_id, network_name, city_fk))
+
+    conn.commit()
+
+#stations for each bike network
+    for n in networks:
+        api_id = n["id"]
+
+        # Get network_id
+        cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id = ?", (api_id,))
+        row = cur.fetchone()
+        if not row:
+            continue
+
+        network_fk, city_fk = row
+
+        stations = n.get("stations", [])
+        if not stations:
+            continue
+
+        for s in stations:
+            cur.execute("""
+                INSERT OR IGNORE INTO stations (
+                    api_station_id, station_name, free_bikes, empty_slots,
+                    latitude, longitude, timestamp, network_id, city_id
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                s.get("id"),
+                s.get("name"),
+                s.get("free_bikes"),
+                s.get("empty_slots"),
+                s.get("latitude"),
+                s.get("longitude"),
+                s.get("timestamp"),
+                network_fk,
+                city_fk
+            ))
 
     conn.commit()
     conn.close()
+    #print("CityBikes tables created and populated with API data")
+
 
 #Asiah's tables
 def create_weather_tables():

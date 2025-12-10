@@ -45,8 +45,6 @@ def save_json_to_file(data, filename="citybikes.json"):
     print(f"JSON saved at: {filepath}")
 
 
-
-
 def main():
     api_url = "https://api.citybik.es/v2/networks"
     response = requests.get(api_url)
