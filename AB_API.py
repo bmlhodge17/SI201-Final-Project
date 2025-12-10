@@ -116,7 +116,6 @@ def main():
     78: "Oslo",
     79: "Copenhagen",
     80: "Reykjavik",
-
     81: "Tokyo",
     82: "Seoul",
     83: "Beijing",
@@ -127,7 +126,6 @@ def main():
     88: "Manila",
     89: "Jakarta",
     90: "New Delhi",
-
     91: "Mumbai",
     92: "Dubai",
     93: "Riyadh",
@@ -167,6 +165,8 @@ def main():
         json.dump(final_json, f, indent=4)
 
     print("Saved to weather_100_cities.json")
+
+
 
 
 main()
