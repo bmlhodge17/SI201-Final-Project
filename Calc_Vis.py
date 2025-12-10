@@ -65,7 +65,7 @@ def main():
     for row in data[:15]:
         print(row)
     
-    # Plot top 15
+    # Plot top 15, call networks plot
     plot_networks(data, top_n = 15)
 
     # Asiah calculation call

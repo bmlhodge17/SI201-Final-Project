@@ -21,7 +21,7 @@ def connect_to_database():
 def create_citybike_tables():
     conn, cur = connect_to_database()
 
-    # ---------- CREATE TABLES ----------
+    
     cur.execute('''
         CREATE TABLE IF NOT EXISTS cities (
             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,31 +42,31 @@ def create_citybike_tables():
         );
     ''')
 
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS stations (
-            station_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            api_station_id TEXT UNIQUE,
-            station_name TEXT,
-            free_bikes INTEGER,
-            empty_slots INTEGER,
-            latitude REAL,
-            longitude REAL,
-            timestamp TEXT,
-            network_id INTEGER,
-            city_id INTEGER,
-            FOREIGN KEY(network_id) REFERENCES networks(network_id),
-            FOREIGN KEY(city_id) REFERENCES cities(city_id)
-        );
-    ''')
+    # cur.execute('''
+    #     CREATE TABLE IF NOT EXISTS stations (
+    #         station_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #         api_station_id TEXT UNIQUE,
+    #         station_name TEXT,
+    #         free_bikes INTEGER,
+    #         empty_slots INTEGER,
+    #         latitude REAL,
+    #         longitude REAL,
+    #         timestamp TEXT,
+    #         network_id INTEGER,
+    #         city_id INTEGER,
+    #         FOREIGN KEY(network_id) REFERENCES networks(network_id),
+    #         FOREIGN KEY(city_id) REFERENCES cities(city_id)
+    #     );
+    # ''')
 
     conn.commit()
 
-    # ---------- LOAD NETWORK LIST ----------
+    # LOAD NETWORK LIST 
     print("Loading network list...")
     url = "https://api.citybik.es/v2/networks"
     networks = requests.get(url).json().get("networks", [])
 
-    # ---------- INSERT CITIES + NETWORKS ----------
+    # INSERT CITIES + NETWORKS 
     for n in networks:
 
         api_id = n.get("id")
@@ -96,48 +96,48 @@ def create_citybike_tables():
 
     conn.commit()
 
-    # ---------- INSERT STATIONS ----------
-    print("Loading station data from detail endpoints...")
+    # # INSERT STATIONS 
+    # print("Loading station data from detail endpoints...")
 
-    for n in networks:
-        api_id = n.get("id")
+    # for n in networks:
+    #     api_id = n.get("id")
 
-        # Get foreign keys
-        cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id=?", (api_id,))
-        row = cur.fetchone()
-        if not row:
-            continue
+    #     # Get foreign keys
+    #     cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id=?", (api_id,))
+    #     row = cur.fetchone()
+    #     if not row:
+    #         continue
 
-        network_fk, city_fk = row
+    #     network_fk, city_fk = row
 
-        detail_url = f"https://api.citybik.es/v2/networks/{api_id}"
+    #     detail_url = f"https://api.citybik.es/v2/networks/{api_id}"
 
-        try:
-            detail_data = requests.get(detail_url).json()
-            stations = detail_data.get("network", {}).get("stations", [])
+    #     try:
+    #         detail_data = requests.get(detail_url).json()
+    #         stations = detail_data.get("network", {}).get("stations", [])
 
-        except Exception as e:
-            print("Error fetching stations for", api_id, e)
-            continue
+    #     except Exception as e:
+    #         print("Error fetching stations for", api_id, e)
+    #         continue
 
-        for s in stations:
-            cur.execute("""
-                INSERT OR IGNORE INTO stations (
-                    api_station_id, station_name, free_bikes, empty_slots,
-                    latitude, longitude, timestamp, network_id, city_id
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                s.get("id"),
-                s.get("name"),
-                s.get("free_bikes"),
-                s.get("empty_slots"),
-                s.get("latitude"),
-                s.get("longitude"),
-                s.get("timestamp"),
-                network_fk,
-                city_fk
-            ))
+    #     for s in stations:
+    #         cur.execute("""
+    #             INSERT OR IGNORE INTO stations (
+    #                 api_station_id, station_name, free_bikes, empty_slots,
+    #                 latitude, longitude, timestamp, network_id, city_id
+    #             )
+    #             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    #         """, (
+    #             s.get("id"),
+    #             s.get("name"),
+    #             s.get("free_bikes"),
+    #             s.get("empty_slots"),
+    #             s.get("latitude"),
+    #             s.get("longitude"),
+    #             s.get("timestamp"),
+    #             network_fk,
+    #             city_fk
+    #         ))
 
     conn.commit()
     conn.close()
