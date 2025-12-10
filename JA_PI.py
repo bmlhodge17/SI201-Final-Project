@@ -33,5 +33,5 @@ with open(json_file, mode='w', encoding='utf-8') as f:
 
 #creating tables 
 #1 table for cities and their id 
-
+#2 create a table for food - tomato, 
 

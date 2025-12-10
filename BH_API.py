@@ -9,6 +9,7 @@
 #Notes for project: if you have dup string data maybe create a new table
 #api city bikes (biking networks)
 #api is good to have 100 rows
+#citybikes API does NOT require an api key!!
 
 
 import json
@@ -42,8 +43,6 @@ def save_json_to_file(data, filename="citybikes.json"):
         json.dump(data, f, indent=4)
 
     print(f"JSON saved at: {filepath}")
-
-
 
 
 def main():
