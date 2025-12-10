@@ -7,7 +7,7 @@
 
 
 #Notes for project: if you have dup string data maybe create a new table
-#table columns: city, city_id, bikes, etc
+#api city bikes (biking networks)
 #api is good to have 100 rows
 
 
