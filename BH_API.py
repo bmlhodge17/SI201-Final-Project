@@ -34,11 +34,26 @@ def fetch_networks_from_api():
 
 #create our database (SQL_Data_base) and start creating tables
 
+def save_json_to_file(data, filename="citybikes.json"):
+    folder = os.path.dirname(os.path.abspath(__file__))  # folder where script lives
+    filepath = os.path.join(folder, filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+    print(f"JSON saved at: {filepath}")
+
 
 
 
 def main():
-    pass
+    api_url = "https://api.citybik.es/v2/networks"
+    response = requests.get(api_url)
+    data = response.json()
+
+    save_json_to_file(data, "citybikes.json")
+
+
 
 if __name__ == "__main__":
     main()
