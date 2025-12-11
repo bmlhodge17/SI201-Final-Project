@@ -38,48 +38,57 @@ with open(json_file, mode='w', encoding='utf-8') as f:
 import sqlite3
 import json
 
-SQL_Data_base = "AB_SQL_Data_base.db"
+import sqlite3
+import json
 
+SQL_Data_base = "AB_SQL_Data_base.db"
 
 def cost_index_table():
     conn = sqlite3.connect(SQL_Data_base)
     cur = conn.cursor()
 
-    # Create table
-    cur.execute('''
+    # 1. Create table
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS cost_index (
             city_id INTEGER PRIMARY KEY,
             city_name TEXT UNIQUE,
             cost_index REAL,
             monthly_salary REAL
         );
-    ''')
+    """)
 
     conn.commit()
 
-    # Load data from JSON file
+    # 2. Load JSON correctly
     with open("cities_living_cost.json", "r") as f:
-        data = json.load(f)  # load JSON properly
+        data = json.load(f)
 
+    # 3. Insert rows
     for row in data:
-        city_id = int(row.get("", 0))  # the "" key in your JSON
-        city_name = row.get("City", "Unknown")
-        cost_index = float(row.get("Cost_index", 0))
-        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0))
 
-        cur.execute('''
+        # Convert ID — JSON key name is literally ""
+        city_id = int(row.get("", 0))
+
+        city_name = row.get("City", "Unknown")
+
+        # Convert strings → floats safely
+        cost_index = float(row.get("Cost_index", 0) or 0)
+        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0) or 0)
+
+        cur.execute("""
             INSERT OR REPLACE INTO cost_index (city_id, city_name, cost_index, monthly_salary)
             VALUES (?, ?, ?, ?)
-        ''', (city_id, city_name, cost_index, monthly_salary))
+        """, (city_id, city_name, cost_index, monthly_salary))
 
     conn.commit()
     conn.close()
 
     print("Cost index and salary data successfully loaded!")
 
+
     
 
-def plot_top_15_salaries(db_path="Jasmine.db"):
+def plot_top_15_salaries(db_path="AB_SQL_Data_base.db"):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
@@ -116,7 +125,7 @@ plot_top_15_salaries()
 
 def main():
     
-    cost_index_table()
+    plot_top_15_salaries()
 
 if __name__ == "__main__":
     main()
