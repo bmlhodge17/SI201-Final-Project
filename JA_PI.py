@@ -10,6 +10,7 @@ import csv
 import json
 import sqlite3
 import matplotlib.pyplot as plt
+import os
 
 df = pd.read_csv('./kaggle data base/cities.csv')
 print(df.head())
@@ -37,10 +38,11 @@ with open(json_file, mode='w', encoding='utf-8') as f:
 import sqlite3
 import json
 
-JA_Data_base = "Jasmine.db"
+SQL_Data_base = "AB_SQL_Data_base.db"
+
 
 def cost_index_table():
-    conn = sqlite3.connect(JA_Data_base)
+    conn = sqlite3.connect(SQL_Data_base)
     cur = conn.cursor()
 
     # Create table
@@ -114,7 +116,7 @@ plot_top_15_salaries()
 
 def main():
     
-    plot_top_15_salaries()
+    cost_index_table()
 
 if __name__ == "__main__":
     main()

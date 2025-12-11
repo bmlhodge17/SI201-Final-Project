@@ -419,11 +419,8 @@ def create_weather_tables():
 #kaggle function 
 
 #city id, city name, and food 
-
-import sqlite3
-import json
-
-SQL_Data_base = "SQL_Data_base.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SQL_Data_base = os.path.join(BASE_DIR, "AB_SQL_Data_base.db")
 
 def cost_index_table():
     conn = sqlite3.connect(SQL_Data_base)
