@@ -21,7 +21,7 @@ def connect_to_database():
 def create_citybike_tables():
     conn, cur = connect_to_database()
 
-    # ---------- CREATE TABLES ----------
+    # CREATE TABLES
     cur.execute('''
         CREATE TABLE IF NOT EXISTS cities (
             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,12 +61,12 @@ def create_citybike_tables():
 
     conn.commit()
 
-    # ---------- LOAD NETWORK LIST ----------
+    # LOAD NETWORK LIST 
     print("Loading network list...")
     url = "https://api.citybik.es/v2/networks"
     networks = requests.get(url).json().get("networks", [])
 
-    # ---------- INSERT CITIES + NETWORKS ----------
+    # INSERT CITIES and NETWORKS 
     for n in networks:
 
         api_id = n.get("id")
@@ -96,7 +96,7 @@ def create_citybike_tables():
 
     conn.commit()
 
-    # ---------- INSERT STATIONS ----------
+    #INSERT STATIONS 
     print("Loading station data from detail endpoints...")
 
     for n in networks:
