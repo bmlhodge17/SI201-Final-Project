@@ -89,11 +89,12 @@ def cost_index_table():
 
     #calculation 
 def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
-    import sqlite3
+
 
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
+    # Get city + salary, ignore NULLs
     cur.execute("""
         SELECT city_name, monthly_salary
         FROM cost_index
@@ -102,23 +103,6 @@ def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
 
     rows = cur.fetchall()
     conn.close()
-
-    # rows looks like: [("City", 5000), ("City2", 6000), ...]
-    
-    # Sort by salary (descending)
-    rows_sorted = sorted(rows, key=lambda x: x[1], reverse=True)
-
-    # Take top 15
-    top15 = rows_sorted[:15]
-
-    # Convert to dictionaries
-    result = [
-        {"city": city, "salary": salary}
-        for city, salary in top15
-    ]
-
-    print(result)
-
 
     # Convert salary strings -> float
     cleaned = []
@@ -131,28 +115,13 @@ def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
 
     # Sort by salary descending and take top 15
     top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
+    cities = [item[0] for item in top15]
+    salaries = [item[1] for item in top15]
 
-    print(top15)
-
-import matplotlib.pyplot as plt
-
-def plot_top_15_salaries(data):
-    """
-    Expects data in the format:
-    [('City1', salary1), ('City2', salary2), ...]
-    """
-
-    #sorting the data in decending order
-    data.sort(key=lambda x: x[1], reverse=True)
-    # Separate cities and salaries
-    
-   
-    
-
-    # Create the bar graph
+    #plot
     plt.figure(figsize=(14, 7))
     plt.bar(cities, salaries)
-    plt.title("Top 15 Cities by Monthly Salary")
+    plt.title("Top 15 Cities by Monthly Salary index")
     plt.xlabel("City")
     plt.ylabel("Average Monthly Salary (USD)")
     plt.xticks(rotation=45, ha="right")
@@ -160,11 +129,41 @@ def plot_top_15_salaries(data):
     plt.show()
 
 
+    # print(cities)
+    # print(salaries)
+
+import matplotlib.pyplot as plt
+
+# def plot_top_15_salaries(data):
+#     """
+#     Expects data in the format:
+#     [('City1', salary1), ('City2', salary2), ...]
+#     """
+
+#     #sorting the data in decending order
+#     #data.sort(key=lambda x: x[1], reverse=True)
+#     # Separate cities and salaries
+    
+#     cities = (for city in data[0])
+#     salaries = (for salary in (data[1]))
+    
+
+#     # Create the bar graph
+#     plt.figure(figsize=(14, 7))
+#     plt.bar(cities, salaries)
+#     plt.title("Top 15 Cities by Monthly Salary")
+#     plt.xlabel("City")
+#     plt.ylabel("Average Monthly Salary (USD)")
+#     plt.xticks(rotation=45, ha="right")
+#     plt.tight_layout()
+#     plt.show()
+
+
 
 
 def main():
     
-    get_top_15_salaries(data)
+    get_top_15_salaries()
 
 if __name__ == "__main__":
     main()
