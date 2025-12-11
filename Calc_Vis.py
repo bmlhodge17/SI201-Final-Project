@@ -60,59 +60,59 @@ def plot_networks(data, top_n = 15):
 import sqlite3
 import matplotlib.pyplot as plt
 
-def calculate_average_food_scores():
-    conn = sqlite3.connect("SQL_Data_base.db")
-    cur = conn.cursor()
+# def calculate_average_food_scores():
+#     conn = sqlite3.connect("SQL_Data_base.db")
+#     cur = conn.cursor()
     
-    cur.execute("""
-        SELECT city_name,
-               (COALESCE(inexpensive_meal, 0) +
-                COALESCE(meal_for_two, 0) +
-                COALESCE(mcdonalds_meal, 0) +
-                COALESCE(domestic_beer, 0) +
-                COALESCE(imported_beer, 0) +
-                COALESCE(cappuccino, 0) +
-                COALESCE(coke, 0)
-               ) * 1.0 /
-               ((inexpensive_meal IS NOT NULL) +
-                (meal_for_two IS NOT NULL) +
-                (mcdonalds_meal IS NOT NULL) +
-                (domestic_beer IS NOT NULL) +
-                (imported_beer IS NOT NULL) +
-                (cappuccino IS NOT NULL) +
-                (coke IS NOT NULL))
-        FROM city_food_costs
-    """)
+#     cur.execute("""
+#         SELECT city_name,
+#                (COALESCE(inexpensive_meal, 0) +
+#                 COALESCE(meal_for_two, 0) +
+#                 COALESCE(mcdonalds_meal, 0) +
+#                 COALESCE(domestic_beer, 0) +
+#                 COALESCE(imported_beer, 0) +
+#                 COALESCE(cappuccino, 0) +
+#                 COALESCE(coke, 0)
+#                ) * 1.0 /
+#                ((inexpensive_meal IS NOT NULL) +
+#                 (meal_for_two IS NOT NULL) +
+#                 (mcdonalds_meal IS NOT NULL) +
+#                 (domestic_beer IS NOT NULL) +
+#                 (imported_beer IS NOT NULL) +
+#                 (cappuccino IS NOT NULL) +
+#                 (coke IS NOT NULL))
+#         FROM city_food_costs
+#     """)
     
-    rows = cur.fetchall()
-    conn.close()
+#     rows = cur.fetchall()
+#     conn.close()
     
     # Convert scores to float
-    result = [(city, float(score)) for city, score in rows if score is not None]
-    return result
+#     result = [(city, float(score)) for city, score in rows if score is not None]
+#     return result
 
-def plot_scatter_food_scores():
-    import matplotlib.pyplot as plt
+# def plot_scatter_food_scores():
+#     import matplotlib.pyplot as plt
 
-    data = calculate_average_food_scores()
+#     data = calculate_average_food_scores()
 
-    cities = []
-    scores = []
+#     cities = []
+#     scores = []
 
-    for row in data:
-        city, score = row
-        if score is not None:
-            cities.append(city)
-            scores.append(score)
+#     for row in data:
+#         city, score = row
+#         if score is not None:
+#             cities.append(city)
+#             scores.append(score)
 
-    plt.figure(figsize=(14,6))
-    plt.scatter(cities, scores)
-    plt.xticks(rotation=90)
-    plt.xlabel("City")
-    plt.ylabel("Average Food Score")
-    plt.title("Scatter Plot of Average Food Scores by City")
-    plt.tight_layout()
-    plt.show()
+#     plt.figure(figsize=(14,6))
+#     plt.scatter(cities, scores)
+#     plt.xticks(rotation=90)
+#     plt.xlabel("City")
+#     plt.ylabel("Average Food Score")
+#     plt.title("Scatter Plot of Average Food Scores by City")
+#     plt.tight_layout()
+#     plt.show()
 
 
 
@@ -259,7 +259,45 @@ def main():
 
     # jasmine calculation call
     # (add Jasmine's calls/plots here if needed)
+def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
 
+
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # Get city + salary, ignore NULLs
+    cur.execute("""
+        SELECT city_name, monthly_salary
+        FROM cost_index
+        WHERE monthly_salary IS NOT NULL
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+
+    # Convert salary strings -> float
+    cleaned = []
+    for city, salary in rows:
+        try:
+            salary_float = float(salary)
+            cleaned.append((city, salary_float))
+        except:
+            continue  # skip corrupted values
+
+    # Sort by salary descending and take top 15
+    top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
+    cities = [item[0] for item in top15]
+    salaries = [item[1] for item in top15]
+
+    #plot
+    plt.figure(figsize=(14, 7))
+    plt.bar(cities, salaries)
+    plt.title("Top 15 Cities by Monthly Salary index")
+    plt.xlabel("City")
+    plt.ylabel("Average Monthly Salary (USD)")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
     main()

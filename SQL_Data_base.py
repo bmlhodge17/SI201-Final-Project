@@ -463,10 +463,6 @@ def cost_index_table():
 
     print("Cost index and salary data successfully loaded!")
 
-    #JOINED TABLES - "joined table"
-    #asiahs - air_quality 
-    #jasmines cost_index 
-    # bri - networks 
 
 
 def main():
