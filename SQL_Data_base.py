@@ -178,7 +178,8 @@ def create_weather_tables():
         query TEXT,
         language TEXT,
         unit TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id),
+        UNIQUE (city_id, type, query, language, unit)
     );
     """)
 
@@ -195,7 +196,7 @@ def create_weather_tables():
         localtime TEXT,
         localtime_epoch INTEGER,
         utc_offset TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id)
     );
     """)
 
@@ -217,7 +218,7 @@ def create_weather_tables():
         uv_index REAL,
         visibility REAL,
         is_day TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id)
     );
     """)
 
@@ -226,7 +227,7 @@ def create_weather_tables():
         icon_id INTEGER PRIMARY KEY AUTOINCREMENT,
         city_id INTEGER,
         icon_url TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id, icon_url)
     );
     """)
 
@@ -235,7 +236,7 @@ def create_weather_tables():
         description_id INTEGER PRIMARY KEY AUTOINCREMENT,
         city_id INTEGER,
         description TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id, description)
     );
     """)
 
@@ -249,7 +250,7 @@ def create_weather_tables():
         moonset TEXT,
         moon_phase TEXT,
         moon_illumination INTEGER,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id)
     );
     """)
 
@@ -265,7 +266,7 @@ def create_weather_tables():
         pm10 REAL,
         us_epa_index INTEGER,
         gb_defra_index INTEGER,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id)
     );
     """)
 
@@ -274,7 +275,7 @@ def create_weather_tables():
         url_id INTEGER PRIMARY KEY AUTOINCREMENT,
         city_id INTEGER,
         weatherstack_url TEXT,
-        FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        FOREIGN KEY (city_id) REFERENCES cities(city_id), UNIQUE (city_id)
     );
     """)
 
@@ -308,7 +309,7 @@ def create_weather_tables():
         #location
         loc = c.get("location", {})
         cur.execute("""
-            INSERT INTO locations (
+            INSERT OR REPLACE INTO locations (
                 city_id, name, country, region, lat, lon,
                 timezone_id, localtime, localtime_epoch, utc_offset
             )
@@ -329,7 +330,7 @@ def create_weather_tables():
         #current weather
         cur_weather = c.get("current", {})
         cur.execute("""
-            INSERT INTO current_weather (
+            INSERT OR REPLACE INTO current_weather (
                 city_id, observation_time, temperature, weather_code,
                 wind_speed, wind_degree, wind_dir, pressure, precip,
                 humidity, cloudcover, feelslike, uv_index, visibility, is_day
@@ -355,19 +356,19 @@ def create_weather_tables():
 
         #icons
         for icon in cur_weather.get("weather_icons", []):
-            cur.execute("INSERT INTO weather_icons (city_id, icon_url) VALUES (?, ?)",
+            cur.execute("INSERT OR IGNORE INTO weather_icons (city_id, icon_url) VALUES (?, ?)",
                         (city_id, icon))
 
         # descriptions
         for desc in cur_weather.get("weather_descriptions", []):
-            cur.execute("INSERT INTO weather_descriptions (city_id, description) VALUES (?, ?)",
+            cur.execute("INSERT OR IGNORE INTO weather_descriptions (city_id, description) VALUES (?, ?)",
                         (city_id, desc))
 
         # astro
         astro = cur_weather.get("astro", {})
         if astro:
             cur.execute("""
-                INSERT INTO astro (
+                INSERT OR IGNORE INTO astro (
                     city_id, sunrise, sunset, moonrise, moonset,
                     moon_phase, moon_illumination
                 )
@@ -386,7 +387,7 @@ def create_weather_tables():
         aq = cur_weather.get("air_quality", {})
         if aq:
             cur.execute("""
-                INSERT INTO air_quality (
+                INSERT OR IGNORE INTO air_quality (
                     city_id, co, no2, o3, so2, pm2_5, pm10,
                     us_epa_index, gb_defra_index
                 )
@@ -405,7 +406,7 @@ def create_weather_tables():
 
         #url
         cur.execute("""
-            INSERT INTO api_urls (city_id, weatherstack_url)
+            INSERT OR REPLACE INTO api_urls (city_id, weatherstack_url)
             VALUES (?, ?)
         """, (city_id, c.get("weatherstack_url")))
 
