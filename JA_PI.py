@@ -98,7 +98,7 @@ def plot_top_15_salaries(db_path="Jasmine.db"):
     salaries = [salary for city, salary in top15]
 
     # Plot
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(10, 6))
     plt.bar(cities, salaries, color='skyblue')
     plt.title("Top 15 Cities by Average Monthly Salary")
     plt.xlabel("City")
