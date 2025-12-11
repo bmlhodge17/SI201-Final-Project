@@ -9,7 +9,7 @@ import requests
 #SQL_Data_base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "SQL_Data_base.db")
 #.py file creates our .db file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQL_Data_base = os.path.join(BASE_DIR, "SQL_Data_base.db")
+SQL_Data_base = os.path.join(BASE_DIR, "AB_SQL_Data_base.db")
 
 def connect_to_database():
     conn = sqlite3.connect(SQL_Data_base)
