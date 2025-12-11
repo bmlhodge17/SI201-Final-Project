@@ -12,6 +12,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import os
 
+
 df = pd.read_csv('./kaggle data base/cities.csv')
 print(df.head())
 
@@ -86,46 +87,84 @@ def cost_index_table():
     print("Cost index and salary data successfully loaded!")
 
 
-    
+    #calculation 
+def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
+    import sqlite3
 
-def plot_top_15_salaries(db_path="AB_SQL_Data_base.db"):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
-    # Select city names and monthly salary
     cur.execute("""
         SELECT city_name, monthly_salary
         FROM cost_index
         WHERE monthly_salary IS NOT NULL
     """)
+
     rows = cur.fetchall()
     conn.close()
 
+    # rows looks like: [("City", 5000), ("City2", 6000), ...]
+    
+    # Sort by salary (descending)
+    rows_sorted = sorted(rows, key=lambda x: x[1], reverse=True)
+
+    # Take top 15
+    top15 = rows_sorted[:15]
+
+    # Convert to dictionaries
+    result = [
+        {"city": city, "salary": salary}
+        for city, salary in top15
+    ]
+
+    print(result)
+
+
+    # Convert salary strings -> float
+    cleaned = []
+    for city, salary in rows:
+        try:
+            salary_float = float(salary)
+            cleaned.append((city, salary_float))
+        except:
+            continue  # skip corrupted values
+
     # Sort by salary descending and take top 15
-    top15 = sorted(rows, key=lambda x: x[1], reverse=True)[:15]
+    top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
 
-    # Separate lists for plotting
-    cities = [city for city, salary in top15]
-    salaries = [salary for city, salary in top15]
+    print(top15)
 
-    # Plot
-    plt.figure(figsize=(10, 6))
-    plt.bar(cities, salaries, color='skyblue')
-    plt.title("Top 15 Cities by Average Monthly Salary")
+import matplotlib.pyplot as plt
+
+def plot_top_15_salaries(data):
+    """
+    Expects data in the format:
+    [('City1', salary1), ('City2', salary2), ...]
+    """
+
+    #sorting the data in decending order
+    data.sort(key=lambda x: x[1], reverse=True)
+    # Separate cities and salaries
+    
+   
+    
+
+    # Create the bar graph
+    plt.figure(figsize=(14, 7))
+    plt.bar(cities, salaries)
+    plt.title("Top 15 Cities by Monthly Salary")
     plt.xlabel("City")
-    plt.ylabel("Monthly Salary (USD)")
+    plt.ylabel("Average Monthly Salary (USD)")
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     plt.show()
 
-# Call the function
-plot_top_15_salaries()
 
 
 
 def main():
     
-    plot_top_15_salaries()
+    get_top_15_salaries(data)
 
 if __name__ == "__main__":
     main()
