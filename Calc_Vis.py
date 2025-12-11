@@ -232,9 +232,34 @@ def main():
     plot_networks(data, top_n = 15)
 
     # Asiah calculation call
-    
 
-    # Jasmine calculation call
+    # top 10 hottest cities
+    hottest = get_top_cities_by_temp(highest=True, limit=10)
+    plot_top_cities_bar(hottest, "temperature", "top 10 hottest cities")
+
+    # top 10 coldest cities
+    coldest = get_top_cities_by_temp(highest=False, limit=10)
+    plot_top_cities_bar(coldest, "temperature", "top 10 coldest cities")
+
+    # top 10 most humid cities
+    most_humid = get_top_cities_by_humidity(highest=True, limit=10)
+    plot_top_cities_bar(most_humid, "humidity", "top 10 most humid cities")
+
+    # top 10 least humid cities
+    least_humid = get_top_cities_by_humidity(highest=False, limit=10)
+    plot_top_cities_bar(least_humid, "humidity", "top 10 least humid cities")
+
+    # wind direction pie chart
+    wind_data = get_wind_direction_counts()
+    plot_pie_from_counts(wind_data, "wind direction distribution")
+
+    # uv index pie chart
+    uv_data = get_uv_index_counts()
+    plot_pie_from_counts(uv_data, "uv index distribution")
+
+    # jasmine calculation call
+    # (add Jasmine's calls/plots here if needed)
+
 
 if __name__ == "__main__":
     main()
