@@ -40,7 +40,7 @@ def networks_per_country():
     return results
 
 
-#function to plot the top countries
+# Function to plot the top countries
 def plot_networks(data, top_n = 15):
     #separate into countries and counts
     countries = [row[0] for row in data[:top_n]]
@@ -54,6 +54,66 @@ def plot_networks(data, top_n = 15):
     plt.ylabel("Number of Networks")
     plt.tight_layout()
     plt.show()
+
+#jasmines calculation
+# Calculate Average food from sql data base for each city
+import sqlite3
+import matplotlib.pyplot as plt
+
+def calculate_average_food_scores():
+    conn = sqlite3.connect("SQL_Data_base.db")
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT city_name,
+               (COALESCE(inexpensive_meal, 0) +
+                COALESCE(meal_for_two, 0) +
+                COALESCE(mcdonalds_meal, 0) +
+                COALESCE(domestic_beer, 0) +
+                COALESCE(imported_beer, 0) +
+                COALESCE(cappuccino, 0) +
+                COALESCE(coke, 0)
+               ) * 1.0 /
+               ((inexpensive_meal IS NOT NULL) +
+                (meal_for_two IS NOT NULL) +
+                (mcdonalds_meal IS NOT NULL) +
+                (domestic_beer IS NOT NULL) +
+                (imported_beer IS NOT NULL) +
+                (cappuccino IS NOT NULL) +
+                (coke IS NOT NULL))
+        FROM city_food_costs
+    """)
+    
+    rows = cur.fetchall()
+    conn.close()
+    
+    # Convert scores to float
+    result = [(city, float(score)) for city, score in rows if score is not None]
+    return result
+
+def plot_scatter_food_scores():
+    import matplotlib.pyplot as plt
+
+    data = calculate_average_food_scores()
+
+    cities = []
+    scores = []
+
+    for row in data:
+        city, score = row
+        if score is not None:
+            cities.append(city)
+            scores.append(score)
+
+    plt.figure(figsize=(14,6))
+    plt.scatter(cities, scores)
+    plt.xticks(rotation=90)
+    plt.xlabel("City")
+    plt.ylabel("Average Food Score")
+    plt.title("Scatter Plot of Average Food Scores by City")
+    plt.tight_layout()
+    plt.show()
+
 
 
 
@@ -161,39 +221,20 @@ def plot_pie_from_counts(data, title):
     plt.show()
 
 def main():
-    # bri calculation call
+    # Bri calculation call
     data = networks_per_country()
+    
+    # Print top 15 for quick check
     for row in data[:15]:
         print(row)
-    plot_networks(data, top_n=15)
+    
+    # Plot top 15, call networks plot
+    plot_networks(data, top_n = 15)
 
-    # asiahs calculations
+    # Asiah calculation call
+    
 
-    # top 10 hottest cities
-    hottest = get_top_cities_by_temp(highest=True, limit=10)
-    plot_top_cities_bar(hottest, "temperature", "top 10 hottest cities")
-
-    # top 10 coldest cities
-    coldest = get_top_cities_by_temp(highest=False, limit=10)
-    plot_top_cities_bar(coldest, "temperature", "top 10 coldest cities")
-
-    # top 10 most humid cities
-    most_humid = get_top_cities_by_humidity(highest=True, limit=10)
-    plot_top_cities_bar(most_humid, "humidity", "top 10 most humid cities")
-
-    # top 10 least humid cities
-    least_humid = get_top_cities_by_humidity(highest=False, limit=10)
-    plot_top_cities_bar(least_humid, "humidity", "top 10 least humid cities")
-
-    # pie chart of wind directions
-    wind_data = get_wind_direction_counts()
-    plot_pie_from_counts(wind_data, "wind direction distribution")
-
-    # pie chart of uv index
-    uv_data = get_uv_index_counts()
-    plot_pie_from_counts(uv_data, "uv index distribution")
-
-# Jasmine calculation call
+    # Jasmine calculation call
 
 if __name__ == "__main__":
     main()

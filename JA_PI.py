@@ -8,6 +8,9 @@
 import pandas as pd
 import csv
 import json
+import sqlite3
+import matplotlib.pyplot as plt
+import os
 
 df = pd.read_csv('./kaggle data base/cities.csv')
 print(df.head())
@@ -31,7 +34,98 @@ with open(csv_file, mode='r', encoding='utf-8') as f:
 with open(json_file, mode='w', encoding='utf-8') as f:
     json.dump(data, f, indent=4)
 
-#creating tables 
-#1 table for cities and their id 
-#2 create a table for food - tomato, 
 
+import sqlite3
+import json
+
+import sqlite3
+import json
+
+SQL_Data_base = "AB_SQL_Data_base.db"
+
+def cost_index_table():
+    conn = sqlite3.connect(SQL_Data_base)
+    cur = conn.cursor()
+
+    # 1. Create table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS cost_index (
+            city_id INTEGER PRIMARY KEY,
+            city_name TEXT UNIQUE,
+            cost_index REAL,
+            monthly_salary REAL
+        );
+    """)
+
+    conn.commit()
+
+    # 2. Load JSON correctly
+    with open("cities_living_cost.json", "r") as f:
+        data = json.load(f)
+
+    # 3. Insert rows
+    for row in data:
+
+        # Convert ID — JSON key name is literally ""
+        city_id = int(row.get("", 0))
+
+        city_name = row.get("City", "Unknown")
+
+        # Convert strings → floats safely
+        cost_index = float(row.get("Cost_index", 0) or 0)
+        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0) or 0)
+
+        cur.execute("""
+            INSERT OR REPLACE INTO cost_index (city_id, city_name, cost_index, monthly_salary)
+            VALUES (?, ?, ?, ?)
+        """, (city_id, city_name, cost_index, monthly_salary))
+
+    conn.commit()
+    conn.close()
+
+    print("Cost index and salary data successfully loaded!")
+
+
+    
+
+def plot_top_15_salaries(db_path="AB_SQL_Data_base.db"):
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # Select city names and monthly salary
+    cur.execute("""
+        SELECT city_name, monthly_salary
+        FROM cost_index
+        WHERE monthly_salary IS NOT NULL
+    """)
+    rows = cur.fetchall()
+    conn.close()
+
+    # Sort by salary descending and take top 15
+    top15 = sorted(rows, key=lambda x: x[1], reverse=True)[:15]
+
+    # Separate lists for plotting
+    cities = [city for city, salary in top15]
+    salaries = [salary for city, salary in top15]
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    plt.bar(cities, salaries, color='skyblue')
+    plt.title("Top 15 Cities by Average Monthly Salary")
+    plt.xlabel("City")
+    plt.ylabel("Monthly Salary (USD)")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
+
+# Call the function
+plot_top_15_salaries()
+
+
+
+def main():
+    
+    plot_top_15_salaries()
+
+if __name__ == "__main__":
+    main()

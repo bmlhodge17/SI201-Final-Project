@@ -21,7 +21,7 @@ def connect_to_database():
 def create_citybike_tables():
     conn, cur = connect_to_database()
 
-    
+    # ---------- CREATE TABLES ----------
     cur.execute('''
         CREATE TABLE IF NOT EXISTS cities (
             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,31 +42,31 @@ def create_citybike_tables():
         );
     ''')
 
-    # cur.execute('''
-    #     CREATE TABLE IF NOT EXISTS stations (
-    #         station_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #         api_station_id TEXT UNIQUE,
-    #         station_name TEXT,
-    #         free_bikes INTEGER,
-    #         empty_slots INTEGER,
-    #         latitude REAL,
-    #         longitude REAL,
-    #         timestamp TEXT,
-    #         network_id INTEGER,
-    #         city_id INTEGER,
-    #         FOREIGN KEY(network_id) REFERENCES networks(network_id),
-    #         FOREIGN KEY(city_id) REFERENCES cities(city_id)
-    #     );
-    # ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS stations (
+            station_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            api_station_id TEXT UNIQUE,
+            station_name TEXT,
+            free_bikes INTEGER,
+            empty_slots INTEGER,
+            latitude REAL,
+            longitude REAL,
+            timestamp TEXT,
+            network_id INTEGER,
+            city_id INTEGER,
+            FOREIGN KEY(network_id) REFERENCES networks(network_id),
+            FOREIGN KEY(city_id) REFERENCES cities(city_id)
+        );
+    ''')
 
     conn.commit()
 
-    # LOAD NETWORK LIST 
+    # ---------- LOAD NETWORK LIST ----------
     print("Loading network list...")
     url = "https://api.citybik.es/v2/networks"
     networks = requests.get(url).json().get("networks", [])
 
-    # INSERT CITIES + NETWORKS 
+    # ---------- INSERT CITIES + NETWORKS ----------
     for n in networks:
 
         api_id = n.get("id")
@@ -96,48 +96,48 @@ def create_citybike_tables():
 
     conn.commit()
 
-    # # INSERT STATIONS 
-    # print("Loading station data from detail endpoints...")
+    # ---------- INSERT STATIONS ----------
+    print("Loading station data from detail endpoints...")
 
-    # for n in networks:
-    #     api_id = n.get("id")
+    for n in networks:
+        api_id = n.get("id")
 
-    #     # Get foreign keys
-    #     cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id=?", (api_id,))
-    #     row = cur.fetchone()
-    #     if not row:
-    #         continue
+        # Get foreign keys
+        cur.execute("SELECT network_id, city_id FROM networks WHERE api_network_id=?", (api_id,))
+        row = cur.fetchone()
+        if not row:
+            continue
 
-    #     network_fk, city_fk = row
+        network_fk, city_fk = row
 
-    #     detail_url = f"https://api.citybik.es/v2/networks/{api_id}"
+        detail_url = f"https://api.citybik.es/v2/networks/{api_id}"
 
-    #     try:
-    #         detail_data = requests.get(detail_url).json()
-    #         stations = detail_data.get("network", {}).get("stations", [])
+        try:
+            detail_data = requests.get(detail_url).json()
+            stations = detail_data.get("network", {}).get("stations", [])
 
-    #     except Exception as e:
-    #         print("Error fetching stations for", api_id, e)
-    #         continue
+        except Exception as e:
+            print("Error fetching stations for", api_id, e)
+            continue
 
-    #     for s in stations:
-    #         cur.execute("""
-    #             INSERT OR IGNORE INTO stations (
-    #                 api_station_id, station_name, free_bikes, empty_slots,
-    #                 latitude, longitude, timestamp, network_id, city_id
-    #             )
-    #             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    #         """, (
-    #             s.get("id"),
-    #             s.get("name"),
-    #             s.get("free_bikes"),
-    #             s.get("empty_slots"),
-    #             s.get("latitude"),
-    #             s.get("longitude"),
-    #             s.get("timestamp"),
-    #             network_fk,
-    #             city_fk
-    #         ))
+        for s in stations:
+            cur.execute("""
+                INSERT OR IGNORE INTO stations (
+                    api_station_id, station_name, free_bikes, empty_slots,
+                    latitude, longitude, timestamp, network_id, city_id
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                s.get("id"),
+                s.get("name"),
+                s.get("free_bikes"),
+                s.get("empty_slots"),
+                s.get("latitude"),
+                s.get("longitude"),
+                s.get("timestamp"),
+                network_fk,
+                city_fk
+            ))
 
     conn.commit()
     conn.close()
@@ -414,71 +414,55 @@ def create_weather_tables():
     conn.commit()
     conn.close()
 
-print("Database created")
+# print("Database created")
 
 #kaggle function 
 
 #city id, city name, and food 
-print("Current working directory:", os.getcwd())
-print("JSON exists:", os.path.exists("cities_living_cost.json"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SQL_Data_base = os.path.join(BASE_DIR, "AB_SQL_Data_base.db")
 
-with open("cities_living_cost.json", "r") as f:
-    data = json.load(f)
+def cost_index_table():
+    conn = sqlite3.connect(SQL_Data_base)
+    cur = conn.cursor()
 
-print("Number of cities loaded:", len(data))
+    # Create table
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS cost_index (
+            city_id INTEGER PRIMARY KEY,
+            city_name TEXT UNIQUE,
+            cost_index REAL,
+            monthly_salary REAL
+        );
+    ''')
 
-conn = sqlite3.connect("SQL_Data_base.db")
-cur = conn.cursor()
+    conn.commit()
 
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS city_food_costs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        city_name TEXT,
-        cost_index REAL,
-        inexpensive_meal REAL,
-        meal_for_two REAL,
-        mcdonalds_meal REAL,
-        domestic_beer REAL,
-        imported_beer REAL,
-        cappuccino REAL,
-        coke REAL
-    )
-""")
+    # Load data from JSON file
+    with open("cities_living_cost.json", "r") as f:
+        data = json.load(f)  # load JSON properly
 
-for city in data:
-    print("Inserting:", city.get("City"))
+    for row in data:
+        city_id = int(row.get("", 0))  # the "" key in your JSON
+        city_name = row.get("City", "Unknown")
+        cost_index = float(row.get("Cost_index", 0))
+        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0))
 
-    city_name = city.get("City")
-    index = float(city.get("Cost_index", 0))
+        cur.execute('''
+            INSERT OR REPLACE INTO cost_index (city_id, city_name, cost_index, monthly_salary)
+            VALUES (?, ?, ?, ?)
+        ''', (city_id, city_name, cost_index, monthly_salary))
 
-    cheap_meal = float(city.get("Meal, Inexpensive Restaurant", 0))
-    meal_for_two = float(city.get("Meal for 2 People, Mid-range Restaurant, Three-course", 0))
-    mcd = float(city.get("McMeal at McDonalds (or Equivalent Combo Meal)", 0))
-    domestic_beer = float(city.get("Domestic Beer (0.5 liter draught)", 0))
-    imported_beer = float(city.get("Imported Beer (0.33 liter bottle)", 0))
-    cappuccino = float(city.get("Cappuccino (regular)", 0))
-    coke = float(city.get("Coke/Pepsi (0.33 liter bottle)", 0))
+    conn.commit()
+    conn.close()
 
-    cur.execute("""
-        INSERT INTO city_food_costs
-        (city_name, cost_index, inexpensive_meal, meal_for_two, mcdonalds_meal,
-         domestic_beer, imported_beer, cappuccino, coke)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (city_name, index, cheap_meal, meal_for_two, mcd,
-          domestic_beer, imported_beer, cappuccino, coke))
-#city 
-conn.commit()
-conn.close()
-
-print("Done!")
-
-   
+    print("Cost index and salary data successfully loaded!")
 
 
 def main():
     create_citybike_tables()
     create_weather_tables()
-
+    cost_index_table()
 
 if __name__ == "__main__":
     main()
