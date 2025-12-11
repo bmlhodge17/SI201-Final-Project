@@ -125,11 +125,16 @@ def main():
     # for row in data[:15]:
     #     print(row)
     
+<<<<<<< HEAD
     # Plot top 15
     #data = calculate_average_food_scores()
     #data = calculate_average_food_scores()
     # for d in data:
     #     print(d)
+=======
+    # Plot top 15, call networks plot
+    plot_networks(data, top_n = 15)
+>>>>>>> 84aa01ef79b28a0fdf78354ee3db8c51e23869fd
 
     #plot top 15
     # Jasmine calculation call
