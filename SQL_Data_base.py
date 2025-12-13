@@ -465,10 +465,68 @@ def cost_index_table():
 
 
 
+#fixing duplicate string data
+#Step 1: JOIN and Create a weather look up table with columns (city_id, city_name_weather, weather_description)
+#Step 2: create main table city plus salary with columns (city_id, city_name, lat, long, and Left JOIN on city_id with salary)
+#step 3: create main city table plus salary AND plus weather
+#               Final table should include columns: cities, city_name, lat, long, network, monthly_salary, weather_description
+#step 4: DROP other tables with duplicate string data
+
+#step 1
+def create_weather_lookup():
+    conn = sqlite3.connect(SQL_Data_base)
+    cur = conn.cursor()
+    
+    cur.execute('''
+            CREATE TABLE IF NOT EXISTS weather_lookup
+                
+                
+
+    ''')
+
+    conn.commit
+    conn.close()
+
+
+#step 2
+def main_and_salary():
+    conn = sqlite3.connect(SQL_Data_base)
+    cur = conn.cursor()
+
+    cur.execute('''
+            CREATE TABLE IF NOT EXISTS 
+                
+                
+
+    ''')
+
+    conn.commit
+    conn.close()
+
+
+#step 3
+def main_sal_and_weather():
+    pass
+
+#step 4
+def drop_tables():
+    pass
+
+
+
+
 def main():
     create_citybike_tables()
     create_weather_tables()
     cost_index_table()
+'''
+    create_weather_lookup
+    main_and_salary
+    main_sal_and_weather
+    drop_tables
+
+    '''
+
 
 if __name__ == "__main__":
     main()
