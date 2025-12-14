@@ -3,6 +3,7 @@ import re
 import sqlite3
 import requests
 from datetime import datetime
+import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "JAB_Database.db")
@@ -84,6 +85,62 @@ def upsert_cities(
 
     conn.commit()
     print(f"New rows inserted: {added}")
+#JASMINES CODE:
+csv_file = 'kaggle data base/cities_living_cost.csv'
+json_file = 'cities_living_cost.json'
+
+# Read CSV and convert to a list of dictionaries
+data = []
+with open(csv_file, mode='r', encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        data.append(row)
+
+# Write JSON
+with open(json_file, mode='w', encoding='utf-8') as f:
+    json.dump(data, f, indent=4)
+
+
+SQL_Data_base = "JAB_Database.db"
+
+def cost_index_table():
+    conn = sqlite3.connect(SQL_Data_base)
+    cur = conn.cursor()
+
+    # 1. Create table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS cost_index (
+            city_name TEXT UNIQUE,
+            monthly_salary REAL
+        );
+    """)
+
+    conn.commit()
+
+    with open("cities_living_cost.json", "r") as f:
+        data = json.load(f)
+
+    for row in data:
+
+        # Convert ID — JSON key name is literally ""
+        #city_id = int(row.get("", 0))
+
+        city_name = row.get("City", "Unknown")
+
+        # Convert strings → floats safely
+        #cost_index = float(row.get("Cost_index", 0) or 0)
+        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0) or 0)
+
+        cur.execute("""
+            INSERT OR REPLACE INTO cost_index (city_name, monthly_salary)
+            VALUES (?, ?)
+        """, (city_name, monthly_salary))
+
+    conn.commit()
+    conn.close()
+
+    print("Cost index and salary data successfully loaded!")
+
 
 
 
