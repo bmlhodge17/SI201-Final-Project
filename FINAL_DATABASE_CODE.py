@@ -4,6 +4,7 @@ import sqlite3
 import requests
 from datetime import datetime
 import json
+import csv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "JAB_Database.db")
@@ -102,44 +103,63 @@ with open(json_file, mode='w', encoding='utf-8') as f:
 
 
 SQL_Data_base = "JAB_Database.db"
-
-def cost_index_table():
-    conn = sqlite3.connect(SQL_Data_base)
-    cur = conn.cursor()
-
-    # 1. Create table
-    cur.execute("""
+def cost_index_table(conn: sqlite3.Connection) -> None:
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS cost_index (
-            city_name TEXT UNIQUE,
+            city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            city_name TEXT UNIQUE NOT NULL,
             monthly_salary REAL
         );
     """)
-
     conn.commit()
 
-    with open("cities_living_cost.json", "r") as f:
+
+#limit to 25 rows:
+def upsert_cost_index(
+    conn: sqlite3.Connection,
+    limit: int = 25
+) -> None:
+
+    with open("cities_living_cost.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    insert_sql = """
+        INSERT OR IGNORE INTO cost_index
+        (city_name, monthly_salary)
+        VALUES (?, ?);
+    """
+
+    cur = conn.cursor()
+    added = 0
+
     for row in data:
+        if added >= limit:
+            break
 
-        # Convert ID — JSON key name is literally ""
-        #city_id = int(row.get("", 0))
+        raw_city = row.get("City")
+        salary_raw = row.get("Average Monthly Net Salary (After Tax)")
 
-        city_name = row.get("City", "Unknown")
+        if not raw_city:
+            continue
 
-        # Convert strings → floats safely
-        #cost_index = float(row.get("Cost_index", 0) or 0)
-        monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0) or 0)
+        city_norm = canon_city(raw_city)
 
-        cur.execute("""
-            INSERT OR REPLACE INTO cost_index (city_name, monthly_salary)
-            VALUES (?, ?)
-        """, (city_name, monthly_salary))
+        try:
+            monthly_salary = float(salary_raw) if salary_raw else None
+        except ValueError:
+            monthly_salary = None
+
+        cur.execute(
+            insert_sql,
+            (city_norm, monthly_salary)
+        )
+
+        if cur.rowcount == 1:
+            added += 1
 
     conn.commit()
-    conn.close()
+    print(f"New rows inserted into cost_index: {added}")
 
-    print("Cost index and salary data successfully loaded!")
 
 
 
@@ -156,7 +176,20 @@ def main() -> None:
         print(f"Total rows in `cities`: {total}")
     finally:
         conn.close()
+    conn = sqlite3.connect(DB_PATH)
+    
+    #jasmines call
+    try:
+        cost_index_table(conn)        # CREATE TABLE ONLY
+        upsert_cost_index(conn)       # inserts ≤25 rows
 
+        total = conn.execute(
+            "SELECT COUNT(*) FROM cost_index;"
+        ).fetchone()[0]
+        print(f"Total rows in `cost_index`: {total}")
+    finally:
+        conn.close()
+    
 if __name__ == "__main__":
     main()
  
