@@ -42,7 +42,7 @@ import json
 import sqlite3
 import json
 
-SQL_Data_base = "AB_SQL_Data_base.db"
+SQL_Data_base = "JAB_Database.db"
 
 def cost_index_table():
     conn = sqlite3.connect(SQL_Data_base)
@@ -51,9 +51,7 @@ def cost_index_table():
     # 1. Create table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cost_index (
-            city_id INTEGER PRIMARY KEY,
             city_name TEXT UNIQUE,
-            cost_index REAL,
             monthly_salary REAL
         );
     """)
@@ -68,18 +66,18 @@ def cost_index_table():
     for row in data:
 
         # Convert ID — JSON key name is literally ""
-        city_id = int(row.get("", 0))
+        #city_id = int(row.get("", 0))
 
         city_name = row.get("City", "Unknown")
 
         # Convert strings → floats safely
-        cost_index = float(row.get("Cost_index", 0) or 0)
+        #cost_index = float(row.get("Cost_index", 0) or 0)
         monthly_salary = float(row.get("Average Monthly Net Salary (After Tax)", 0) or 0)
 
         cur.execute("""
-            INSERT OR REPLACE INTO cost_index (city_id, city_name, cost_index, monthly_salary)
-            VALUES (?, ?, ?, ?)
-        """, (city_id, city_name, cost_index, monthly_salary))
+            INSERT OR REPLACE INTO cost_index (city_name, monthly_salary)
+            VALUES (?, ?)
+        """, (city_name, monthly_salary))
 
     conn.commit()
     conn.close()
@@ -88,45 +86,45 @@ def cost_index_table():
 
 
     #calculation 
-def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
+# def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
 
 
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+#     conn = sqlite3.connect(db_path)
+#     cur = conn.cursor()
 
-    # Get city + salary, ignore NULLs
-    cur.execute("""
-        SELECT city_name, monthly_salary
-        FROM cost_index
-        WHERE monthly_salary IS NOT NULL
-    """)
+#     # Get city + salary, ignore NULLs
+#     cur.execute("""
+#         SELECT city_name, monthly_salary
+#         FROM cost_index
+#         WHERE monthly_salary IS NOT NULL
+#     """)
 
-    rows = cur.fetchall()
-    conn.close()
+#     rows = cur.fetchall()
+#     conn.close()
 
-    # Convert salary strings -> float
-    cleaned = []
-    for city, salary in rows:
-        try:
-            salary_float = float(salary)
-            cleaned.append((city, salary_float))
-        except:
-            continue  # skip corrupted values
+#     # Convert salary strings -> float
+#     cleaned = []
+#     for city, salary in rows:
+#         try:
+#             salary_float = float(salary)
+#             cleaned.append((city, salary_float))
+#         except:
+#             continue  # skip corrupted values
 
-    # Sort by salary descending and take top 15
-    top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
-    cities = [item[0] for item in top15]
-    salaries = [item[1] for item in top15]
+#     # Sort by salary descending and take top 15
+#     top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
+#     cities = [item[0] for item in top15]
+#     salaries = [item[1] for item in top15]
 
-    #plot
-    plt.figure(figsize=(14, 7))
-    plt.bar(cities, salaries)
-    plt.title("Top 15 Cities by Monthly Salary index")
-    plt.xlabel("City")
-    plt.ylabel("Average Monthly Salary (USD)")
-    plt.xticks(rotation=45, ha="right")
-    plt.tight_layout()
-    plt.show()
+#     #plot
+#     plt.figure(figsize=(14, 7))
+#     plt.bar(cities, salaries)
+#     plt.title("Top 15 Cities by Monthly Salary index")
+#     plt.xlabel("City")
+#     plt.ylabel("Average Monthly Salary (USD)")
+#     plt.xticks(rotation=45, ha="right")
+#     plt.tight_layout()
+#     plt.show()
 
 
     # print(cities)
@@ -163,7 +161,7 @@ import matplotlib.pyplot as plt
 
 def main():
     
-    get_top_15_salaries()
+    cost_index_table()
 
 if __name__ == "__main__":
     main()

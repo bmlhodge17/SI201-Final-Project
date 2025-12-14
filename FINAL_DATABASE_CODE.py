@@ -85,6 +85,8 @@ def upsert_cities(
     conn.commit()
     print(f"New rows inserted: {added}")
 
+
+
 def main() -> None:
     conn = sqlite3.connect(DB_PATH)
     try:

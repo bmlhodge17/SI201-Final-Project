@@ -3,6 +3,7 @@ import re
 import sqlite3
 import requests
 from datetime import datetime
+import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "JAB_Database.db")
@@ -85,6 +86,67 @@ def upsert_cities(
     conn.commit()
     print(f"New rows inserted: {added}")
 
+#JASMINES CODE:
+#loading the data:
+
+# def cost_index_table(conn: sqlite3.Connection) -> None:
+#     conn.execute("""
+#         CREATE TABLE IF NOT EXISTS cost_index (
+#             city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+#             city TEXT UNIQUE NOT NULL,
+#             cost_index REAL,
+#             monthly_salary REAL
+#         );
+#     """)
+#     conn.commit()
+
+
+# def load_cost_cities_json(path: str) -> list[dict]:
+#     with open(path, "r", encoding="utf-8") as f:
+#         return json.load(f)
+
+
+# def limit_cost(
+#     conn: sqlite3.Connection,
+#     cost_cities: list[dict],
+#     limit: int = 25
+# ) -> None:
+
+#     insert_sql = """
+#         INSERT OR IGNORE INTO cost_index
+#         (city, cost_index, monthly_salary)
+#         VALUES (?, ?, ?);
+#     """
+
+#     cur = conn.cursor()
+#     added = 0
+
+#     for item in cost_cities:
+#         if added >= limit:
+#             break
+
+#         raw_city = item.get("City")
+#         cost     = item.get("Cost_Index")
+#         salary   = item.get("Average Monthly Net Salary (After Tax)")
+
+#         if not raw_city:
+#             continue
+
+#         city_norm = canon_city(raw_city)
+
+#         cur.execute(
+#             insert_sql,
+#             (city_norm, cost, salary)
+#         )
+
+#         if cur.rowcount == 1:
+#             added += 1
+
+#     conn.commit()
+#     print(f"New rows inserted: {added}")
+
+
+
 def main() -> None:
     conn = sqlite3.connect(DB_PATH)
     try:
@@ -95,6 +157,20 @@ def main() -> None:
         # optional: show total rows in the table
         total = conn.execute("SELECT COUNT(*) FROM cities;").fetchone()[0]
         print(f"Total rows in `cities`: {total}")
+    finally:
+        conn.close()
+
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        cost_rows = load_cost_cities_json("cities_living_cost.json")
+
+        cost_index_table(conn)
+        limit_cost(conn, cost_rows, limit=25)
+
+        total = conn.execute(
+            "SELECT COUNT(*) FROM cost_index;"
+        ).fetchone()[0]
+        print("Total rows in cost_index:", total)
     finally:
         conn.close()
 
