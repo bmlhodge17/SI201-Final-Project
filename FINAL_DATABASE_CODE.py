@@ -114,6 +114,16 @@ def cost_index_table(conn: sqlite3.Connection) -> None:
     """)
     conn.commit()
 
+def gasoline_index_table(conn: sqlite3.Connection) -> None:
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS gasoline_index (
+            city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            city_name TEXT UNIQUE NOT NULL,
+            gasoline_price REAL
+        );
+    """)
+    conn.commit()
+
 
 #limit to 25 rows:
 def upsert_cost_index(
@@ -161,57 +171,88 @@ def upsert_cost_index(
     conn.commit()
     print(f"New rows inserted into cost_index: {added}")
 
+def upsert_gasoline_index(
+    conn: sqlite3.Connection,
+    limit: int = 25 ) -> None:
+
+    with open("cities_living_cost.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    insert_sql = """
+        INSERT OR IGNORE INTO gasoline_index
+        (city_name, gasoline_price)
+        VALUES (?, ?);
+    """
+
+    cur = conn.cursor()
+    added = 0
+
+    for row in data:
+        if added >= limit:
+            break
+
+        raw_city = row.get("City")
+        gasoline_raw = row.get("Gasoline (1 liter)")
+
+        if not raw_city:
+            continue
+
+        city_norm = canon_city(raw_city)
+
+        try:
+            gasoline_price = float(gasoline_raw) if gasoline_raw else None
+        except ValueError:
+            gasoline_price = None
+
+        cur.execute(
+            insert_sql,
+            (city_norm, gasoline_price)
+        )
+
+        if cur.rowcount == 1:
+            added += 1
+
+    conn.commit()
+    print(f"New rows inserted into gasoline_index: {added}")
+
 #----JOIN TABLE ----
-#joining jazz's salary and bri's city_name tables 
+#jjoining jasmines two tables with the shared key city name 
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SQL_Data_base = os.path.join(BASE_DIR, "JAB_Database.db")
+
 def create_join_table(conn: sqlite3.Connection) -> None:
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS join_table AS
+    cur = conn.cursor()
+
+    # Check how many cities match
+    cur.execute("""
+        SELECT COUNT(*)
+        FROM cost_index c
+        JOIN gasoline_index g
+        ON c.city_name = g.city_name
+    """)
+    print("Matching cities:", cur.fetchone()[0])
+
+    # Drop table if it exists
+    cur.execute("DROP TABLE IF EXISTS joined_table")
+
+    # Create joined table
+    cur.execute("""
+        CREATE TABLE joined_table AS
         SELECT
             c.city_name,
-            ci.monthly_salary,
-            c.latitude,
-            c.longitude
-        FROM cities c
-        JOIN cost_index ci
-            ON c.city_name = ci.city_name;
+            c.monthly_salary,
+            g.gasoline_price
+        FROM cost_index c
+        INNER JOIN gasoline_index g
+            ON c.city_name = g.city_name;
     """)
+
     conn.commit()
-    print("Join table created successfully!")
+    print("Joined table created successfully!")
 
-
-
-
-
-
-#def main() -> None:
-    # conn = sqlite3.connect(DB_PATH)
-    # try:
-    #     init_db(conn)
-    #     networks = fetch_networks()
-    #     upsert_cities(conn, networks)
-
-    #     # optional: show total rows in the table
-    #     total = conn.execute("SELECT COUNT(*) FROM cities;").fetchone()[0]
-    #     print(f"Total rows in `cities`: {total}")
-    # finally:
-    #     conn.close()
-    # conn = sqlite3.connect(DB_PATH)
-
-    # #jasmines call
-    # try:
-    #     cost_index_table(conn)        # CREATE TABLE ONLY
-    #     upsert_cost_index(conn)       # inserts ≤25 rows
-
-    #     total = conn.execute(
-    #         "SELECT COUNT(*) FROM cost_index;"
-    #     ).fetchone()[0]
-    #     print(f"Total rows in `cost_index`: {total}")
-    # finally:
-    #     conn.close()
-
-    # #joining table call:
     
-    
+#----ASIAHS CODE----
 
   #asiahs weather code:  
 API_KEY = "b4e833d38c9ea664b0cd9c76f2c84a6f"
@@ -362,9 +403,16 @@ def main():
 
         # ensure CSV is converted to JSON before inserting
         convert_csv_to_json()
-
+        #creates the tables 
         cost_index_table(conn)
+        gasoline_index_table(conn)
+
+        #returns the 25 rows
+        upsert_gasoline_index(conn)
         upsert_cost_index(conn)
+
+        #creates join table:
+        create_join_table(conn)
        
         # asiah: weather api
        
@@ -372,9 +420,8 @@ def main():
         populate_weather(conn)
 
      
-        # optional join table
-
-        create_join_table(conn)
+        
+        
 
     finally:
         conn.close()
