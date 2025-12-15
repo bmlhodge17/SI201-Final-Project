@@ -70,33 +70,35 @@ def plot_networks(countries, counts, top_n=15):
 #jasmines calculation
 # joined table calculation 
 
-
-def plot_join_table(conn: sqlite3.Connection) -> None:
+def plot_join_cost_and_gasoline(conn):
     cur = conn.cursor()
 
-    # Select data from join table
     cur.execute("""
-        SELECT monthly_salary, gasoline_price
-        FROM joined_table
-        WHERE monthly_salary IS NOT NULL
-          AND gasoline_price IS NOT NULL;
+        SELECT cj.city_name, cj.monthly_salary, cj.gasoline_price
+        FROM joined_table cj
+        WHERE cj.monthly_salary IS NOT NULL AND cj.gasoline_price IS NOT NULL;
     """)
 
     rows = cur.fetchall()
 
     if not rows:
-        print("No data available for scatter plot.")
+        print("no data in joined_table to plot")
         return
 
-    salaries = [row[0] for row in rows]
-    gas_prices = [row[1] for row in rows]
+    cities = [row[0] for row in rows]
+    salaries = [row[1] for row in rows]
+    gasoline_prices = [row[2] for row in rows]
 
-    # Create scatter plot
-    plt.figure()
-    plt.scatter(salaries, gas_prices)
-    plt.xlabel("Average Monthly Salary")
-    plt.ylabel("Gasoline Price (per liter)")
-    plt.title("Monthly Salary vs Gasoline Price by City")
+    plt.figure(figsize=(14, 7))
+    plt.scatter(gasoline_prices, salaries)
+
+    for i, city in enumerate(cities):
+        plt.annotate(city, (gasoline_prices[i], salaries[i]), textcoords="offset points", xytext=(0,5), ha='center', fontsize=8)
+
+    plt.xlabel("Gasoline Price per Liter (USD)")
+    plt.ylabel("Average Monthly Salary (USD)")
+    plt.title("Monthly Salary vs Gasoline Price per Liter")
+    plt.tight_layout()
     plt.show()
 
 #calculating the average salary in the first 25 cities in the cost index table
@@ -280,6 +282,7 @@ def plot_top_10_coldest():
     #
 
 def main():
+    conn = sqlite3.connect(DB_PATH)
     # Bri calculation call
     countries, counts = networks_per_country()
 
@@ -288,15 +291,15 @@ def main():
     
     
     #join table plot call
-    plot_join_table(get_connection()[0])
+    plot_join_cost_and_gasoline(conn)
     #Jasmines call
     # jasmine scatter (only if table exists)
-    conn, cur = connect_to_database()
-    try:
-        plot_join_table(conn)
-    except:
-        print("joined_table missing or empty")
-    conn.close()
+    # conn, cur = connect_to_database()
+    # try:
+    #     plot_join_table(conn)
+    # except:
+    #     print("joined_table missing or empty")
+    # conn.close()
 
     average_salary_first_25()
 

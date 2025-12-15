@@ -225,19 +225,25 @@ def upsert_gasoline_index(
 #----JOIN TABLE ----
 #joining jazz's salary and bri's city_name tables 
 def create_join_table(conn: sqlite3.Connection) -> None:
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS join_table AS
+    cur = conn.cursor()
+
+    # Drop first to avoid stale schemas
+    cur.execute("DROP TABLE IF EXISTS joined_table")
+
+    cur.execute("""
+        CREATE TABLE joined_table AS
         SELECT
             c.city_name,
-            ci.monthly_salary,
-            c.latitude,
-            c.longitude
-        FROM cities c
-        JOIN cost_index ci
-            ON c.city_name = ci.city_name;
+            c.monthly_salary,
+            g.gasoline_price
+        FROM cost_index c
+        JOIN gasoline_index g
+            ON c.city_name = g.city_name;
     """)
+
     conn.commit()
-    print("Join table created successfully!")
+    print("joined_table created successfully!")
+
 
 
     
