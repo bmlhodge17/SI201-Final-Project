@@ -147,6 +147,8 @@ def upsert_cities(
 
 
 
+
+
 def main() -> None:
     conn = sqlite3.connect(DB_PATH)
     try:
