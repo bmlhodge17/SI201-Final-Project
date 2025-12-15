@@ -106,7 +106,7 @@ def average_salary_first_25():
     conn.close()
     print(avg_salary)
 
-
+#asiahs visualizations
 # this helper runs any sql query so i don’t have to repeat the connection stuff
 def run_query(query, params=None):
     conn, cur = connect_to_database()
@@ -118,45 +118,8 @@ def run_query(query, params=None):
     conn.close()
     return rows
 
-def plot_weather_description_dotplot():
-    conn, cur = connect_to_database()
 
-    cur.execute("""
-        SELECT weather_description
-        FROM weather
-        WHERE weather_description IS NOT NULL;
-    """)
-
-    rows = cur.fetchall()
-    conn.close()
-
-    descriptions = [row[0] for row in rows]
-
-    if not descriptions:
-        print("no weather description data to plot")
-        return
-
-    # unique descriptions for y-axis
-    unique_desc = list(set(descriptions))
-    y_map = {desc: i for i, desc in enumerate(unique_desc)}
-
-    x_vals = []
-    y_vals = []
-
-    for desc in descriptions:
-        x_vals.append(random.uniform(0, 1))
-        y_vals.append(y_map[desc])
-
-    plt.figure(figsize=(10, 6))
-    plt.scatter(x_vals, y_vals, alpha=0.6)
-    plt.yticks(range(len(unique_desc)), unique_desc)
-    plt.xlabel("random spread")
-    plt.ylabel("weather description")
-    plt.title("dot plot of weather descriptions")
-    plt.tight_layout()
-    plt.show()
     
-    #asiahs visualizations
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
 
@@ -307,6 +270,7 @@ def plot_top_10_coldest():
     plt.tight_layout()
     plt.show()
 
+
     #
 
 def main():
@@ -354,6 +318,7 @@ def main():
     plot_weather_description_dotplot()
     plot_top_10_hottest()
     plot_top_10_coldest()
+ 
 
 
 if __name__ == "__main__":
