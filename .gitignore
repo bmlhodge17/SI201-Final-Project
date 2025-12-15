@@ -1,2 +1,2 @@
-JAB_Database.db
-*.db
+__pycache__/
+*.pyc

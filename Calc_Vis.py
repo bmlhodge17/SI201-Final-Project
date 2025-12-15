@@ -2,6 +2,7 @@
 import sqlite3
 import os
 import matplotlib.pyplot as plt
+import random
 
 
 # Path to the SQLite database
@@ -21,39 +22,48 @@ from SQL_Data_base import connect_to_database
 
 def networks_per_country():
     """
-    Returns a list of (country, count_of_networks)
-    sorted by most to least networks.
+    Returns two lists:
+    - countries
+    - network counts
+    sorted from most to least networks
     """
     conn, cur = connect_to_database()
 
-    query = """
-        SELECT country, COUNT(*) as num_networks
+    cur.execute("""
+        SELECT country, COUNT(*) AS num_networks
         FROM cities
         WHERE country IS NOT NULL
         GROUP BY country
         ORDER BY num_networks DESC;
-    """
+    """)
 
-    cur.execute(query)
-    results = cur.fetchall()
+    rows = cur.fetchall()
     conn.close()
-    return results
+
+    # separate into two lists (same pattern as other calculations)
+    countries = [row[0] for row in rows]
+    counts = [row[1] for row in rows]
+
+    return countries, counts
 
 
 # Function to plot the top countries
-def plot_networks(data, top_n = 15):
-    #separate into countries and counts
-    countries = [row[0] for row in data[:top_n]]
-    counts = [row[1] for row in data[:top_n]]
-    
-    #create bar chart
-    plt.figure(figsize = (12,6))
-    plt.bar(countries, counts, color = 'skyblue')
-    plt.xticks(rotation = 45, ha = 'right')
-    plt.title(f"Top {top_n} Countries by Number of CityBike Networks")
+def plot_networks(countries, counts, top_n=15):
+    countries = countries[:top_n]
+    counts = counts[:top_n]
+
+    plt.figure(figsize=(12, 6))
+    bars = plt.bar(countries, counts)
+    for bar in bars:
+        bar.set_color("green")
+
+    plt.xticks(rotation=45, ha="right")
+    plt.xlabel("Country")
     plt.ylabel("Number of Networks")
+    plt.title(f"Top {top_n} Countries by Number of CityBike Networks")
     plt.tight_layout()
     plt.show()
+
 
 #jasmines calculation
 # joined table calculation 
@@ -106,7 +116,7 @@ def average_salary_first_25():
     conn.close()
     print(avg_salary)
 
-
+#asiahs visualizations
 # this helper runs any sql query so i don’t have to repeat the connection stuff
 def run_query(query, params=None):
     conn, cur = connect_to_database()
@@ -119,86 +129,159 @@ def run_query(query, params=None):
     return rows
 
 
-# this gets the hottest or coldest cities by joining weather and city name tables
-def get_top_cities_by_temp(highest=True, limit=10):
-    order = "desc" if highest else "asc"
-    query = f"""
-        select wc.city_name, cw.temperature
-        from current_weather cw
-        join weather_cities wc on cw.city_id = wc.city_id
-        where cw.temperature is not null
-        order by cw.temperature {order}
-        limit ?;
-    """
-    return run_query(query, (limit,))
+    
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
+
+# connect to database
+def connect_to_database():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    return conn, cur
 
 
-# this makes a bar graph for any (city, value) data
-def plot_top_cities_bar(data, metric_label, title):
-    cities = [row[0] for row in data]
-    values = [row[1] for row in data]
+# uv index histogram
+def plot_uv_index_histogram():
+    conn, cur = connect_to_database()
 
-    plt.figure(figsize=(10, 5))
-    plt.bar(cities, values)
-    plt.xticks(rotation=45, ha='right')
-    plt.ylabel(metric_label)
-    plt.title(title)
-    plt.tight_layout()
-    plt.show()
+    # get uv index values
+    cur.execute("""
+        SELECT uv_index
+        FROM weather
+        WHERE uv_index IS NOT NULL;
+    """)
 
+    rows = cur.fetchall()
+    conn.close()
 
-# this gets the cities with the highest or lowest humidity
-def get_top_cities_by_humidity(highest=True, limit=10):
-    order = "desc" if highest else "asc"
-    query = f"""
-        select wc.city_name, cw.humidity
-        from current_weather cw
-        join weather_cities wc on cw.city_id = wc.city_id
-        where cw.humidity is not null
-        order by cw.humidity {order}
-        limit ?;
-    """
-    return run_query(query, (limit,))
+    uv_values = [row[0] for row in rows]
 
-
-# this gets how many cities have each wind direction
-def get_wind_direction_counts():
-    query = """
-        select cw.wind_dir, count(*) as count_dir
-        from current_weather cw
-        where cw.wind_dir is not null
-        group by cw.wind_dir
-        order by count_dir desc;
-    """
-    return run_query(query)
-
-
-# this gets how many cities have each uv index value
-def get_uv_index_counts():
-    query = """
-        select cw.uv_index, count(*) as count_uv
-        from current_weather cw
-        where cw.uv_index is not null
-        group by cw.uv_index
-        order by cw.uv_index;
-    """
-    return run_query(query)
-
-
-# this makes pie charts for wind direction and uv index
-def plot_pie_from_counts(data, title):
-    if not data:
-        print("no data for pie chart:", title)
+    if not uv_values:
+        print("no uv index data to plot")
         return
 
-    labels = [row[0] for row in data]
-    sizes = [row[1] for row in data]
-
-    plt.figure(figsize=(6, 6))
-    plt.pie(sizes, labels=labels, autopct="%1.1f%%")
-    plt.title(title)
+    # make histogram
+    plt.figure(figsize=(8, 5))
+    plt.hist(uv_values, bins=10)
+    plt.xlabel("uv index")
+    plt.ylabel("number of cities")
+    plt.title("distribution of uv index across cities")
     plt.tight_layout()
     plt.show()
+
+# weather description dot plot
+
+def plot_weather_description_dotplot():
+    conn, cur = connect_to_database()
+
+    # get weather descriptions
+    cur.execute("""
+        SELECT weather_description
+        FROM weather
+        WHERE weather_description IS NOT NULL;
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+
+    descriptions = [row[0] for row in rows]
+
+    if not descriptions:
+        print("no weather description data to plot")
+        return
+
+    # count how many times each description appears
+    counts = {}
+    for desc in descriptions:
+        counts[desc] = counts.get(desc, 0) + 1
+
+    unique_desc = list(counts.keys())
+    y_map = {desc: i for i, desc in enumerate(unique_desc)}
+
+    x_vals = []
+    y_vals = []
+
+    # create dots based on frequency
+    for desc, count in counts.items():
+        for i in range(count):
+            x_vals.append(i + 1)  # count-based x-axis
+            y_vals.append(y_map[desc])
+
+    plt.figure(figsize=(12, 6))
+    plt.scatter(x_vals, y_vals)
+    plt.yticks(range(len(unique_desc)), unique_desc)
+    plt.xlabel("number of cities")
+    plt.ylabel("weather description")
+    plt.title("dot plot of weather descriptions by frequency")
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_top_10_hottest():
+    conn, cur = connect_to_database()
+
+    cur.execute("""
+        SELECT city_name, temperature
+        FROM weather
+        WHERE temperature IS NOT NULL
+        ORDER BY temperature DESC
+        LIMIT 10;
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        print("no temperature data for hottest cities")
+        return
+
+    cities = [row[0] for row in rows]
+    temps = [row[1] for row in rows]
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(cities, temps)
+    plt.xlabel("temperature (celsius)")
+    plt.ylabel("city")
+    plt.title("top 10 hottest cities (celsius)")
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+
+# top 10 lowest temperatures 
+def plot_top_10_coldest():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT city_name, temperature
+        FROM weather
+        WHERE temperature IS NOT NULL
+        ORDER BY temperature ASC
+        LIMIT 10;
+    """)
+
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        print("no temperature data for coldest cities")
+        return
+
+    cities = [row[0] for row in rows]
+    temps = [row[1] for row in rows]
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(cities, temps)
+    plt.xlabel("temperature (celsius)")
+    plt.ylabel("city")
+    plt.title("top 10 coldest cities (celsius)")
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+
+    #
 
 def main():
     # Bri calculation call
@@ -237,11 +320,27 @@ def main():
     uv_data = get_uv_index_counts()
     plot_pie_from_counts(uv_data, "uv index distribution")
 #----Jasmines code ----
+<<<<<<< HEAD
  #   join table plot call
     plot_join_table(get_connection()[0])
 
  #   average salary calculation call
+=======
+    #join table plot call
+    #plot_join_table(get_connection()[0])
+    #average salary calculation call
+    get_connection()
+    countries, counts = networks_per_country()
+    plot_networks(countries, counts, top_n=15)
+
+>>>>>>> 63e8f20a086f5c1011bfd12d7b4124e0d6174772
     average_salary_first_25()
+    plot_uv_index_histogram()
+    plot_weather_description_dotplot()
+    plot_top_10_hottest()
+    plot_top_10_coldest()
+ 
+
 
 if __name__ == "__main__":
     main()
