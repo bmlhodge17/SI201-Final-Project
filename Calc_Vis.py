@@ -22,39 +22,49 @@ from SQL_Data_base import connect_to_database
 
 def networks_per_country():
     """
-    Returns a list of (country, count_of_networks)
-    sorted by most to least networks.
+    Returns two lists:
+    - countries
+    - network counts
+    sorted from most to least networks
     """
     conn, cur = connect_to_database()
 
-    query = """
-        SELECT country, COUNT(*) as num_networks
+    cur.execute("""
+        SELECT country, COUNT(*) AS num_networks
         FROM cities
         WHERE country IS NOT NULL
         GROUP BY country
         ORDER BY num_networks DESC;
-    """
+    """)
 
-    cur.execute(query)
-    results = cur.fetchall()
+    rows = cur.fetchall()
     conn.close()
-    return results
+
+    # separate into two lists (same pattern as other calculations)
+    countries = [row[0] for row in rows]
+    counts = [row[1] for row in rows]
+
+    return countries, counts
 
 
 # Function to plot the top countries
-def plot_networks(data, top_n = 15):
-    #separate into countries and counts
-    countries = [row[0] for row in data[:top_n]]
-    counts = [row[1] for row in data[:top_n]]
-    
-    #create bar chart
-    plt.figure(figsize = (12,6))
-    plt.bar(countries, counts, color = 'skyblue')
-    plt.xticks(rotation = 45, ha = 'right')
-    plt.title(f"Top {top_n} Countries by Number of CityBike Networks")
+def plot_networks(countries, counts, top_n=15):
+    countries = countries[:top_n]
+    counts = counts[:top_n]
+
+    plt.figure(figsize=(12, 6))
+    bars = plt.bar(countries, counts)
+    for bar in bars:
+        bar.set_color("green")
+
+    plt.xticks(rotation=45, ha="right")
+    plt.xlabel("Country")
     plt.ylabel("Number of Networks")
+    plt.title(f"Top {top_n} Countries by Number of CityBike Networks")
     plt.tight_layout()
     plt.show()
+
+
 #jasmines calculation
 # joined table calculation 
 
@@ -313,6 +323,10 @@ def main():
     #join table plot call
     #plot_join_table(get_connection()[0])
     #average salary calculation call
+    get_connection()
+    countries, counts = networks_per_country()
+    plot_networks(countries, counts, top_n=15)
+
     average_salary_first_25()
     plot_uv_index_histogram()
     plot_weather_description_dotplot()
