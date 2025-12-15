@@ -380,14 +380,8 @@ def main():
 
         
 
-<<<<<<< HEAD
-        #returns the 25 rows
-        upsert_gasoline_index(conn)
-        upsert_cost_index(conconvsen)
-=======
         cost_index_table(conn)
         upsert_cost_index(conn)
->>>>>>> 63e8f20a086f5c1011bfd12d7b4124e0d6174772
 
         cost_count = conn.execute(
             "SELECT COUNT(*) FROM cost_index;"

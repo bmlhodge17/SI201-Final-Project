@@ -320,12 +320,6 @@ def main():
     uv_data = get_uv_index_counts()
     plot_pie_from_counts(uv_data, "uv index distribution")
 #----Jasmines code ----
-<<<<<<< HEAD
- #   join table plot call
-    plot_join_table(get_connection()[0])
-
- #   average salary calculation call
-=======
     #join table plot call
     #plot_join_table(get_connection()[0])
     #average salary calculation call
@@ -333,7 +327,6 @@ def main():
     countries, counts = networks_per_country()
     plot_networks(countries, counts, top_n=15)
 
->>>>>>> 63e8f20a086f5c1011bfd12d7b4124e0d6174772
     average_salary_first_25()
     plot_uv_index_histogram()
     plot_weather_description_dotplot()
