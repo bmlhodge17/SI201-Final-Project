@@ -160,35 +160,75 @@ def upsert_cost_index(
     conn.commit()
     print(f"New rows inserted into cost_index: {added}")
 
+#----JOIN TABLE ----
+#joining jazz's salary and bri's city_name tables 
+def create_join_table(conn: sqlite3.Connection) -> None:
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS join_table AS
+        SELECT
+            c.city_name,
+            ci.monthly_salary,
+            c.latitude,
+            c.longitude
+        FROM cities c
+        JOIN cost_index ci
+            ON c.city_name = ci.city_name;
+    """)
+    conn.commit()
+    print("Join table created successfully!")
+
+
 
 
 
 
 def main() -> None:
+    # conn = sqlite3.connect(DB_PATH)
+    # try:
+    #     init_db(conn)
+    #     networks = fetch_networks()
+    #     upsert_cities(conn, networks)
+
+    #     # optional: show total rows in the table
+    #     total = conn.execute("SELECT COUNT(*) FROM cities;").fetchone()[0]
+    #     print(f"Total rows in `cities`: {total}")
+    # finally:
+    #     conn.close()
+    # conn = sqlite3.connect(DB_PATH)
+
+    # #jasmines call
+    # try:
+    #     cost_index_table(conn)        # CREATE TABLE ONLY
+    #     upsert_cost_index(conn)       # inserts ≤25 rows
+
+    #     total = conn.execute(
+    #         "SELECT COUNT(*) FROM cost_index;"
+    #     ).fetchone()[0]
+    #     print(f"Total rows in `cost_index`: {total}")
+    # finally:
+    #     conn.close()
+
+    # #joining table call:
+    
     conn = sqlite3.connect(DB_PATH)
     try:
+        # cities table (friend’s API)
         init_db(conn)
         networks = fetch_networks()
         upsert_cities(conn, networks)
 
-        # optional: show total rows in the table
-        total = conn.execute("SELECT COUNT(*) FROM cities;").fetchone()[0]
-        print(f"Total rows in `cities`: {total}")
-    finally:
-        conn.close()
-    conn = sqlite3.connect(DB_PATH)
-    
-    #jasmines call
-    try:
-        cost_index_table(conn)        # CREATE TABLE ONLY
-        upsert_cost_index(conn)       # inserts ≤25 rows
+        # cost index table (your Kaggle data)
+        cost_index_table(conn)
+        upsert_cost_index(conn)
 
-        total = conn.execute(
-            "SELECT COUNT(*) FROM cost_index;"
-        ).fetchone()[0]
-        print(f"Total rows in `cost_index`: {total}")
+        # join table
+        create_join_table(conn)
+
     finally:
         conn.close()
+
+    
+#create_join_table(conn = sqlite3.connect(DB_PATH))
     
 if __name__ == "__main__":
     main()
