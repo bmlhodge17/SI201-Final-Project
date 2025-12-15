@@ -226,6 +226,7 @@ def init_weather_table(conn):
             city_name TEXT NOT NULL,
             weather_description TEXT,
             uv_index INTEGER,
+             temperature REAL,
             updated_at TEXT,
             FOREIGN KEY (city_id) REFERENCES cities(city_id)
         );
@@ -242,6 +243,10 @@ def init_weather_table(conn):
     # add uv_index if missing
     if "uv_index" not in columns:
         cur.execute("ALTER TABLE weather ADD COLUMN uv_index REAL;")
+    # add temperature if missing
+
+    if "temperature" not in columns:
+        cur.execute("ALTER TABLE weather ADD COLUMN temperature REAL;")
 
     # add city_name column only if it is missing
     if "city_name" not in columns:
@@ -266,7 +271,7 @@ def get_city_weather(city_name):
     # default fallback weather data
     weather = {
         "weather_description": "data unavailable",
-        "uv_index": None
+        "uv_index": None, "temperature": None
     }
 
     # handle api errors (common on free tier)
@@ -286,11 +291,21 @@ def get_city_weather(city_name):
         description = current["weather_descriptions"][0]
 
     uv_index = current.get("uv_index")
+    weather["temperature"] = current.get("temperature")
 
     return {
         "weather_description": description,
-        "uv_index": uv_index
+        "uv_index": current.get("uv_index"),  "temperature": current.get("temperature")
     }
+def add_uv_index_column(conn):
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(weather);")
+    columns = [col[1] for col in cur.fetchall()]
+
+    if "uv_index" not in columns:
+        cur.execute("ALTER TABLE weather ADD COLUMN uv_index REAL;")
+
+    conn.commit()
     
 
 
@@ -320,15 +335,16 @@ def populate_weather(conn, limit=25):
         
         cur.execute(
             """
-            INSERT INTO weather
-            (city_id, city_name, weather_description, uv_index, updated_at)
-            VALUES (?, ?, ?, ?, ?);
+            INSERT OR REPLACE INTO weather
+            (city_id, city_name, weather_description, uv_index, temperature, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?);
             """,
             (
                 city_id,
                 city_name,
                 weather["weather_description"],
                 weather["uv_index"],
+                weather["temperature"],
                 datetime.utcnow().isoformat(timespec="seconds"),
             ),
         )
@@ -377,6 +393,7 @@ def main():
        
         init_weather_table(conn)
         populate_weather(conn)
+        add_uv_index_column(conn)
 
         weather_count = conn.execute(
             "SELECT COUNT(*) FROM weather;"
