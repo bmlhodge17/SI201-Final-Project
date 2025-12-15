@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # Path to the SQLite database
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "SQL_Data_base.db")
+DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
 
 # Get connection
 def get_connection():
@@ -56,76 +56,56 @@ def plot_networks(data, top_n = 15):
     plt.show()
 
 #jasmines calculation
-# Calculate Average food from sql data base for each city
-import sqlite3
-import matplotlib.pyplot as plt
-
-# def calculate_average_food_scores():
-#     conn = sqlite3.connect("SQL_Data_base.db")
-#     cur = conn.cursor()
-    
-#     cur.execute("""
-#         SELECT city_name,
-#                (COALESCE(inexpensive_meal, 0) +
-#                 COALESCE(meal_for_two, 0) +
-#                 COALESCE(mcdonalds_meal, 0) +
-#                 COALESCE(domestic_beer, 0) +
-#                 COALESCE(imported_beer, 0) +
-#                 COALESCE(cappuccino, 0) +
-#                 COALESCE(coke, 0)
-#                ) * 1.0 /
-#                ((inexpensive_meal IS NOT NULL) +
-#                 (meal_for_two IS NOT NULL) +
-#                 (mcdonalds_meal IS NOT NULL) +
-#                 (domestic_beer IS NOT NULL) +
-#                 (imported_beer IS NOT NULL) +
-#                 (cappuccino IS NOT NULL) +
-#                 (coke IS NOT NULL))
-#         FROM city_food_costs
-#     """)
-    
-#     rows = cur.fetchall()
-#     conn.close()
-    
-    # Convert scores to float
-#     result = [(city, float(score)) for city, score in rows if score is not None]
-#     return result
-
-# def plot_scatter_food_scores():
-#     import matplotlib.pyplot as plt
-
-#     data = calculate_average_food_scores()
-
-#     cities = []
-#     scores = []
-
-#     for row in data:
-#         city, score = row
-#         if score is not None:
-#             cities.append(city)
-#             scores.append(score)
-
-#     plt.figure(figsize=(14,6))
-#     plt.scatter(cities, scores)
-#     plt.xticks(rotation=90)
-#     plt.xlabel("City")
-#     plt.ylabel("Average Food Score")
-#     plt.title("Scatter Plot of Average Food Scores by City")
-#     plt.tight_layout()
-#     plt.show()
+# joined table calculation 
 
 
+def plot_join_table(conn: sqlite3.Connection) -> None:
+    cur = conn.cursor()
 
+    # Select data from join table
+    cur.execute("""
+        SELECT monthly_salary, gasoline_price
+        FROM joined_table
+        WHERE monthly_salary IS NOT NULL
+          AND gasoline_price IS NOT NULL;
+    """)
 
-# short main removed; consolidated in the unified main below
+    rows = cur.fetchall()
 
-# Asiah calculation call
-#top 10 cities with highest temperature
-#top 10 with lowest temperature
-#top 10 with highest humidity
-#top 10 with lowest humidity
-#pie chart of wind directions
-#pie chart of uv index
+    if not rows:
+        print("No data available for scatter plot.")
+        return
+
+    salaries = [row[0] for row in rows]
+    gas_prices = [row[1] for row in rows]
+
+    # Create scatter plot
+    plt.figure()
+    plt.scatter(salaries, gas_prices)
+    plt.xlabel("Average Monthly Salary")
+    plt.ylabel("Gasoline Price (per liter)")
+    plt.title("Monthly Salary vs Gasoline Price by City")
+    plt.show()
+
+#calculating the average salary in the first 25 cities in the cost index table
+def average_salary_first_25():
+    conn, cur = get_connection()
+    query = """
+        SELECT AVG(monthly_salary)
+        FROM cost_index
+        WHERE city_id IN (
+            SELECT city_id
+            FROM cost_index
+            ORDER BY city_id
+            LIMIT 25
+        )
+        AND monthly_salary IS NOT NULL;
+    """
+    cur.execute(query)
+    avg_salary = cur.fetchone()[0]
+    conn.close()
+    print(avg_salary)
+
 
 # this helper runs any sql query so i don’t have to repeat the connection stuff
 def run_query(query, params=None):
@@ -221,83 +201,46 @@ def plot_pie_from_counts(data, title):
     plt.show()
 
 def main():
-    # Bri calculation call
-    data = networks_per_country()
+    # # Bri calculation call
+    # data = networks_per_country()
     
-    # Print top 15 for quick check
-    for row in data[:15]:
-        print(row)
+    # # Print top 15 for quick check
+    # for row in data[:15]:
+    #     print(row)
     
-    # Plot top 15, call networks plot
-    plot_networks(data, top_n = 15)
+    # # Plot top 15, call networks plot
+    # plot_networks(data, top_n = 15)
 
-    # Asiah calculation call
+    # # Asiah calculation call
 
-    # top 10 hottest cities
-    hottest = get_top_cities_by_temp(highest=True, limit=10)
-    plot_top_cities_bar(hottest, "temperature", "top 10 hottest cities")
+    # # top 10 hottest cities
+    # hottest = get_top_cities_by_temp(highest=True, limit=10)
+    # plot_top_cities_bar(hottest, "temperature", "top 10 hottest cities")
 
-    # top 10 coldest cities
-    coldest = get_top_cities_by_temp(highest=False, limit=10)
-    plot_top_cities_bar(coldest, "temperature", "top 10 coldest cities")
+    # # top 10 coldest cities
+    # coldest = get_top_cities_by_temp(highest=False, limit=10)
+    # plot_top_cities_bar(coldest, "temperature", "top 10 coldest cities")
 
-    # top 10 most humid cities
-    most_humid = get_top_cities_by_humidity(highest=True, limit=10)
-    plot_top_cities_bar(most_humid, "humidity", "top 10 most humid cities")
+    # # top 10 most humid cities
+    # most_humid = get_top_cities_by_humidity(highest=True, limit=10)
+    # plot_top_cities_bar(most_humid, "humidity", "top 10 most humid cities")
 
-    # top 10 least humid cities
-    least_humid = get_top_cities_by_humidity(highest=False, limit=10)
-    plot_top_cities_bar(least_humid, "humidity", "top 10 least humid cities")
+    # # top 10 least humid cities
+    # least_humid = get_top_cities_by_humidity(highest=False, limit=10)
+    # plot_top_cities_bar(least_humid, "humidity", "top 10 least humid cities")
 
-    # wind direction pie chart
-    wind_data = get_wind_direction_counts()
-    plot_pie_from_counts(wind_data, "wind direction distribution")
+    # # wind direction pie chart
+    # wind_data = get_wind_direction_counts()
+    # plot_pie_from_counts(wind_data, "wind direction distribution")
 
-    # uv index pie chart
-    uv_data = get_uv_index_counts()
-    plot_pie_from_counts(uv_data, "uv index distribution")
-
-    # jasmine calculation call
-    # (add Jasmine's calls/plots here if needed)
-def get_top_15_salaries(db_path="AB_SQL_Data_base.db"):
-
-
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
-
-    # Get city + salary, ignore NULLs
-    cur.execute("""
-        SELECT city_name, monthly_salary
-        FROM cost_index
-        WHERE monthly_salary IS NOT NULL
-    """)
-
-    rows = cur.fetchall()
-    conn.close()
-
-    # Convert salary strings -> float
-    cleaned = []
-    for city, salary in rows:
-        try:
-            salary_float = float(salary)
-            cleaned.append((city, salary_float))
-        except:
-            continue  # skip corrupted values
-
-    # Sort by salary descending and take top 15
-    top15 = sorted(cleaned, key=lambda x: x[1], reverse=True)[:15]
-    cities = [item[0] for item in top15]
-    salaries = [item[1] for item in top15]
-
-    #plot
-    plt.figure(figsize=(14, 7))
-    plt.bar(cities, salaries)
-    plt.title("Top 15 Cities by Monthly Salary index")
-    plt.xlabel("City")
-    plt.ylabel("Average Monthly Salary (USD)")
-    plt.xticks(rotation=45, ha="right")
-    plt.tight_layout()
-    plt.show()
+    # # uv index pie chart
+    # uv_data = get_uv_index_counts()
+    # plot_pie_from_counts(uv_data, "uv index distribution")
+#----Jasmines code ----
+    #join table plot call
+    #plot_join_table(get_connection()[0])
+    #average salary calculation call
+    average_salary_first_25()
 
 if __name__ == "__main__":
     main()
