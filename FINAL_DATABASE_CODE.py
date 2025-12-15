@@ -114,16 +114,6 @@ def cost_index_table(conn: sqlite3.Connection) -> None:
     """)
     conn.commit()
 
-def gasoline_index_table(conn: sqlite3.Connection) -> None:
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS gasoline_index (
-            city_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            city_name TEXT UNIQUE NOT NULL,
-            gasoline_price REAL
-        );
-    """)
-    conn.commit()
-
 
 #limit to 25 rows:
 def upsert_cost_index(
@@ -171,88 +161,57 @@ def upsert_cost_index(
     conn.commit()
     print(f"New rows inserted into cost_index: {added}")
 
-def upsert_gasoline_index(
-    conn: sqlite3.Connection,
-    limit: int = 25 ) -> None:
-
-    with open("cities_living_cost.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    insert_sql = """
-        INSERT OR IGNORE INTO gasoline_index
-        (city_name, gasoline_price)
-        VALUES (?, ?);
-    """
-
-    cur = conn.cursor()
-    added = 0
-
-    for row in data:
-        if added >= limit:
-            break
-
-        raw_city = row.get("City")
-        gasoline_raw = row.get("Gasoline (1 liter)")
-
-        if not raw_city:
-            continue
-
-        city_norm = canon_city(raw_city)
-
-        try:
-            gasoline_price = float(gasoline_raw) if gasoline_raw else None
-        except ValueError:
-            gasoline_price = None
-
-        cur.execute(
-            insert_sql,
-            (city_norm, gasoline_price)
-        )
-
-        if cur.rowcount == 1:
-            added += 1
-
-    conn.commit()
-    print(f"New rows inserted into gasoline_index: {added}")
-
 #----JOIN TABLE ----
-#jjoining jasmines two tables with the shared key city name 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQL_Data_base = os.path.join(BASE_DIR, "JAB_Database.db")
-
+#joining jazz's salary and bri's city_name tables 
 def create_join_table(conn: sqlite3.Connection) -> None:
-    cur = conn.cursor()
-
-    # Check how many cities match
-    cur.execute("""
-        SELECT COUNT(*)
-        FROM cost_index c
-        JOIN gasoline_index g
-        ON c.city_name = g.city_name
-    """)
-    print("Matching cities:", cur.fetchone()[0])
-
-    # Drop table if it exists
-    cur.execute("DROP TABLE IF EXISTS joined_table")
-
-    # Create joined table
-    cur.execute("""
-        CREATE TABLE joined_table AS
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS join_table AS
         SELECT
             c.city_name,
-            c.monthly_salary,
-            g.gasoline_price
-        FROM cost_index c
-        INNER JOIN gasoline_index g
-            ON c.city_name = g.city_name;
+            ci.monthly_salary,
+            c.latitude,
+            c.longitude
+        FROM cities c
+        JOIN cost_index ci
+            ON c.city_name = ci.city_name;
     """)
-
     conn.commit()
-    print("Joined table created successfully!")
+    print("Join table created successfully!")
 
+
+
+
+
+
+#def main() -> None:
+    # conn = sqlite3.connect(DB_PATH)
+    # try:
+    #     init_db(conn)
+    #     networks = fetch_networks()
+    #     upsert_cities(conn, networks)
+
+    #     # optional: show total rows in the table
+    #     total = conn.execute("SELECT COUNT(*) FROM cities;").fetchone()[0]
+    #     print(f"Total rows in `cities`: {total}")
+    # finally:
+    #     conn.close()
+    # conn = sqlite3.connect(DB_PATH)
+
+    # #jasmines call
+    # try:
+    #     cost_index_table(conn)        # CREATE TABLE ONLY
+    #     upsert_cost_index(conn)       # inserts ≤25 rows
+
+    #     total = conn.execute(
+    #         "SELECT COUNT(*) FROM cost_index;"
+    #     ).fetchone()[0]
+    #     print(f"Total rows in `cost_index`: {total}")
+    # finally:
+    #     conn.close()
+
+    # #joining table call:
     
-#----ASIAHS CODE----
+    
 
   #asiahs weather code:  
 API_KEY = "b4e833d38c9ea664b0cd9c76f2c84a6f"
@@ -263,10 +222,10 @@ def init_weather_table(conn):
         """
         CREATE TABLE IF NOT EXISTS weather (
             weather_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            city_id INTEGER NOT NULL,
+            city_id INTEGER UNIQUE NOT NULL,
             city_name TEXT NOT NULL,
-            weather_city TEXT,
             weather_description TEXT,
+            uv_index INTEGER,
             updated_at TEXT,
             FOREIGN KEY (city_id) REFERENCES cities(city_id)
         );
@@ -278,6 +237,11 @@ def init_weather_table(conn):
     cur = conn.cursor()
     cur.execute("PRAGMA table_info(weather);")
     columns = [col[1] for col in cur.fetchall()]
+
+
+    # add uv_index if missing
+    if "uv_index" not in columns:
+        cur.execute("ALTER TABLE weather ADD COLUMN uv_index REAL;")
 
     # add city_name column only if it is missing
     if "city_name" not in columns:
@@ -299,6 +263,12 @@ def get_city_weather(city_name):
     resp = requests.get(url, timeout=15)
     data = resp.json()
 
+    # default fallback weather data
+    weather = {
+        "weather_description": "data unavailable",
+        "uv_index": None
+    }
+
     # handle api errors (common on free tier)
     if data.get("success") is False:
         print("WEATHERSTACK ERROR FOR", city_name, data)
@@ -308,17 +278,20 @@ def get_city_weather(city_name):
     current = data.get("current")
     if not current:
         print("NO CURRENT WEATHER FOR", city_name, data)
-        return None
+        return weather
 
     # extract first weather description if available
     description = None
     if current.get("weather_descriptions"):
         description = current["weather_descriptions"][0]
 
+    uv_index = current.get("uv_index")
+
     return {
-        "weather_city": data.get("location", {}).get("name"),
-        "weather_description": description
+        "weather_description": description,
+        "uv_index": uv_index
     }
+    
 
 
 
@@ -326,10 +299,6 @@ def get_city_weather(city_name):
 # makes api call for each city and inserts weather data into weather table
 def populate_weather(conn, limit=25):
     cur = conn.cursor()
-
-    #clear existing weather data to avoid duplicates
-
-    cur.execute("DELETE FROM weather;")
 
     # get city_id and city_name from cities table
     cur.execute(
@@ -344,30 +313,22 @@ def populate_weather(conn, limit=25):
     cities = cur.fetchall()
     print("cities available for weather:", len(cities))
 
-    # 🔥 THIS LOOP MUST BE INSIDE THE FUNCTION
+    # THIS LOOP MUST BE INSIDE THE FUNCTION
     for city_id, city_name in cities:
         weather = get_city_weather(city_name.title())
 
-        # fallback if API fails
-        if not weather:
-            weather = {
-                "weather_city": city_name,
-                "weather_description": "data unavailable"
-            }
-
-        print("INSERTING WEATHER FOR", city_name)
-
+        
         cur.execute(
             """
-            INSERT OR REPLACE INTO weather
-            (city_id, city_name, weather_city, weather_description, updated_at)
+            INSERT INTO weather
+            (city_id, city_name, weather_description, uv_index, updated_at)
             VALUES (?, ?, ?, ?, ?);
             """,
             (
                 city_id,
                 city_name,
-                weather.get("weather_city"),
-                weather.get("weather_description"),
+                weather["weather_description"],
+                weather["uv_index"],
                 datetime.utcnow().isoformat(timespec="seconds"),
             ),
         )
@@ -401,27 +362,31 @@ def main():
        
         # jasmine: cost index
 
-        # ensure CSV is converted to JSON before inserting
-        convert_csv_to_json()
-        #creates the tables 
-        cost_index_table(conn)
-        gasoline_index_table(conn)
+        
 
-        #returns the 25 rows
-        upsert_gasoline_index(conn)
+        cost_index_table(conn)
         upsert_cost_index(conn)
 
-        #creates join table:
-        create_join_table(conn)
+        cost_count = conn.execute(
+            "SELECT COUNT(*) FROM cost_index;"
+        ).fetchone()[0]
+        print("COST INDEX COUNT:", cost_count)
+
        
         # asiah: weather api
        
         init_weather_table(conn)
         populate_weather(conn)
 
+        weather_count = conn.execute(
+            "SELECT COUNT(*) FROM weather;"
+        ).fetchone()[0]
+        print("WEATHER COUNT:", weather_count)
+
      
-        
-        
+        # optional join table
+
+        create_join_table(conn)
 
     finally:
         conn.close()
