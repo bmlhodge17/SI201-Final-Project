@@ -9,16 +9,18 @@ import random
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
 
-# Get connection
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-
     return conn, cur
 
 
+
 # Bri CALCULATION 1: Networks per country
-from SQL_Data_base import connect_to_database
+def connect_to_database():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    return conn, cur
 
 def networks_per_country():
     """
@@ -132,12 +134,6 @@ def run_query(query, params=None):
     
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
-
-# connect to database
-def connect_to_database():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    return conn, cur
 
 
 # uv index histogram
@@ -285,25 +281,25 @@ def plot_top_10_coldest():
 
 def main():
     # Bri calculation call
-    data = networks_per_country()
-    
-    # Print top 15 for quick check
-    for row in data[:15]:
-        print(row)
-    
-    # Plot top 15, call networks plot
-    plot_networks(data, top_n = 15)
+    countries, counts = networks_per_country()
 
-   
+    # Plot top 15, call networks plot
+    plot_networks(countries, counts, top_n=15)
+    
     
     #join table plot call
     plot_join_table(get_connection()[0])
-    #Bri's call
-    get_connection()
-    countries, counts = networks_per_country()
-    plot_networks(countries, counts, top_n=15)
     #Jasmines call
+    # jasmine scatter (only if table exists)
+    conn, cur = connect_to_database()
+    try:
+        plot_join_table(conn)
+    except:
+        print("joined_table missing or empty")
+    conn.close()
+
     average_salary_first_25()
+
     #Asiahs calls
     plot_uv_index_histogram()
     plot_weather_description_dotplot()
