@@ -409,7 +409,7 @@ def main():
 
         #returns the 25 rows
         upsert_gasoline_index(conn)
-        upsert_cost_index(conn)
+        upsert_cost_index(conconvsen)
 
         #creates join table:
         create_join_table(conn)
