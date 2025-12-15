@@ -86,20 +86,21 @@ def upsert_cities(
 
     conn.commit()
     print(f"New rows inserted: {added}")
+
 #JASMINES CODE:
 csv_file = 'kaggle data base/cities_living_cost.csv'
 json_file = 'cities_living_cost.json'
 
 # Read CSV and convert to a list of dictionaries
-data = []
-with open(csv_file, mode='r', encoding='utf-8') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        data.append(row)
+def convert_csv_to_json():
+    data = []
+    with open(csv_file, mode='r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            data.append(row)
 
-# Write JSON
-with open(json_file, mode='w', encoding='utf-8') as f:
-    json.dump(data, f, indent=4)
+    with open(json_file, mode='w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
 
 
 SQL_Data_base = "JAB_Database.db"
@@ -182,7 +183,7 @@ def create_join_table(conn: sqlite3.Connection) -> None:
 
 
 
-def main() -> None:
+#def main() -> None:
     # conn = sqlite3.connect(DB_PATH)
     # try:
     #     init_db(conn)
@@ -210,25 +211,174 @@ def main() -> None:
 
     # #joining table call:
     
+    
+
+  #asiahs weather code:  
+API_KEY = "b4e833d38c9ea664b0cd9c76f2c84a6f"
+
+
+def init_weather_table(conn):
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS weather (
+            weather_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            city_id INTEGER NOT NULL,
+            city_name TEXT NOT NULL,
+            weather_city TEXT,
+            weather_description TEXT,
+            updated_at TEXT,
+            FOREIGN KEY (city_id) REFERENCES cities(city_id)
+        );
+        """
+    )
+
+    # check existing columns in the weather table
+    # this prevents errors if the table was created earlier without city_name
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(weather);")
+    columns = [col[1] for col in cur.fetchall()]
+
+    # add city_name column only if it is missing
+    if "city_name" not in columns:
+        cur.execute("ALTER TABLE weather ADD COLUMN city_name TEXT;")
+
+    conn.commit()
+
+
+
+# fetch weather data from weatherstack api
+# takes a city name and returns relevant weather info
+def get_city_weather(city_name):
+    # build request url using api key and city name
+    url = (
+        f"http://api.weatherstack.com/current"
+        f"?access_key={API_KEY}&query={city_name}"
+    )
+
+    resp = requests.get(url, timeout=15)
+    data = resp.json()
+
+    # handle api errors (common on free tier)
+    if data.get("success") is False:
+        print("WEATHERSTACK ERROR FOR", city_name, data)
+        return None
+
+    # sometimes api returns success but no current weather data
+    current = data.get("current")
+    if not current:
+        print("NO CURRENT WEATHER FOR", city_name, data)
+        return None
+
+    # extract first weather description if available
+    description = None
+    if current.get("weather_descriptions"):
+        description = current["weather_descriptions"][0]
+
+    return {
+        "weather_city": data.get("location", {}).get("name"),
+        "weather_description": description
+    }
+
+
+
+# pulls city_id and city_name from cities table
+# makes api call for each city and inserts weather data into weather table
+def populate_weather(conn, limit=25):
+    cur = conn.cursor()
+
+    #clear existing weather data to avoid duplicates
+
+    cur.execute("DELETE FROM weather;")
+
+    # get city_id and city_name from cities table
+    cur.execute(
+        """
+        SELECT city_id, city_name
+        FROM cities
+        LIMIT ?
+        """,
+        (limit,),
+    )
+
+    cities = cur.fetchall()
+    print("cities available for weather:", len(cities))
+
+    # 🔥 THIS LOOP MUST BE INSIDE THE FUNCTION
+    for city_id, city_name in cities:
+        weather = get_city_weather(city_name.title())
+
+        # fallback if API fails
+        if not weather:
+            weather = {
+                "weather_city": city_name,
+                "weather_description": "data unavailable"
+            }
+
+        print("INSERTING WEATHER FOR", city_name)
+
+        cur.execute(
+            """
+            INSERT OR REPLACE INTO weather
+            (city_id, city_name, weather_city, weather_description, updated_at)
+            VALUES (?, ?, ?, ?, ?);
+            """,
+            (
+                city_id,
+                city_name,
+                weather.get("weather_city"),
+                weather.get("weather_description"),
+                datetime.utcnow().isoformat(timespec="seconds"),
+            ),
+        )
+
+    conn.commit()
+    print("weather table populated")
+
+
+#main function
+# runs city setup first, then weather setup
+# ensures tables are populated in correct order
+
+
+def main():
+    print("USING DB FILE:", DB_PATH)
     conn = sqlite3.connect(DB_PATH)
+
     try:
-        # cities table (friend’s API)
+       
+        # bri: cities api
+     
         init_db(conn)
         networks = fetch_networks()
         upsert_cities(conn, networks)
 
-        # cost index table (your Kaggle data)
+        city_count = conn.execute(
+            "SELECT COUNT(*) FROM cities;"
+        ).fetchone()[0]
+        print("CITIES COUNT:", city_count)
+
+       
+        # jasmine: cost index
+
+        # ensure CSV is converted to JSON before inserting
+        convert_csv_to_json()
+
         cost_index_table(conn)
         upsert_cost_index(conn)
+       
+        # asiah: weather api
+       
+        init_weather_table(conn)
+        populate_weather(conn)
 
-        # join table
+     
+        # optional join table
+
         create_join_table(conn)
 
     finally:
         conn.close()
 
 
-
 if __name__ == "__main__":
     main()
- 
