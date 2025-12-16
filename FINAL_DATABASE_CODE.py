@@ -311,8 +311,12 @@ def get_city_weather(city_name):
 
     # handle api errors (common on free tier)
     if data.get("success") is False:
-        print("WEATHERSTACK ERROR FOR", city_name, data)
-        return None
+        print("WEATHERSTACK ERROR FOR", city_name)
+        return weather
+    
+    current = data.get("current")
+    if not current:
+        return weather
 
     # sometimes api returns success but no current weather data
     current = data.get("current")
@@ -370,9 +374,14 @@ def populate_weather(conn, limit=25):
         
         cur.execute(
             """
-            INSERT OR REPLACE INTO weather
+            INSERT INTO weather
             (city_id, city_name, weather_description, uv_index, temperature, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?);
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(city_id) DO UPDATE SET
+                weather_description = excluded.weather_description,
+                uv_index = excluded.uv_index,
+                temperature = excluded.temperature,
+                updated_at = excluded.updated_at;
             """,
             (
                 city_id,

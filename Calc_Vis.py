@@ -138,11 +138,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "JAB_Database.db")
 
 
-# uv index histogram
+# uv index histogram with colored bins
 def plot_uv_index_histogram():
     conn, cur = connect_to_database()
 
-    # get uv index values
+    # get uv index values from weather table
     cur.execute("""
         SELECT uv_index
         FROM weather
@@ -158,23 +158,48 @@ def plot_uv_index_histogram():
         print("no uv index data to plot")
         return
 
-    # make histogram
+    # uv index bins grouped by 2
+    bins = [0, 2, 4, 6, 8, 10, 12]
+
     plt.figure(figsize=(8, 5))
-    plt.hist(uv_values, bins=10)
+
+    # create histogram and capture bars
+    counts, bin_edges, patches = plt.hist(
+        uv_values,
+        bins=bins,
+        edgecolor="black"
+    )
+
+    # colors for each uv range
+    colors = [
+        "#7FB3D5",  # low
+        "#76D7C4",  # moderate
+        "#F7DC6F",  # high
+        "#F5B041",  # very high
+        "#EB984E",  # extreme
+        "#E74C3C"   # extreme+
+    ]
+
+    # apply colors to each bin
+    for patch, color in zip(patches, colors):
+        patch.set_facecolor(color)
+
+    plt.xlim(0, 12)
     plt.xlabel("uv index")
     plt.ylabel("number of cities")
-    plt.title("distribution of uv index across cities")
+    plt.title("distribution of uv index across cities (grouped by 2)")
     plt.tight_layout()
     plt.show()
 
 # weather description dot plot
+#with city labels
 
 def plot_weather_description_dotplot():
     conn, cur = connect_to_database()
 
-    # get weather descriptions
+    # get city names and weather descriptions
     cur.execute("""
-        SELECT weather_description
+        SELECT city_name, weather_description
         FROM weather
         WHERE weather_description IS NOT NULL;
     """)
@@ -182,37 +207,48 @@ def plot_weather_description_dotplot():
     rows = cur.fetchall()
     conn.close()
 
-    descriptions = [row[0] for row in rows]
-
-    if not descriptions:
+    if not rows:
         print("no weather description data to plot")
         return
 
-    # count how many times each description appears
-    counts = {}
-    for desc in descriptions:
-        counts[desc] = counts.get(desc, 0) + 1
-
-    unique_desc = list(counts.keys())
-    y_map = {desc: i for i, desc in enumerate(unique_desc)}
+    # group cities by weather description
+    grouped = {}
+    for city, desc in rows:
+        grouped.setdefault(desc, []).append(city)
 
     x_vals = []
     y_vals = []
+    labels = []
 
-    # create dots based on frequency
-    for desc, count in counts.items():
-        for i in range(count):
-            x_vals.append(i + 1)  # count-based x-axis
-            y_vals.append(y_map[desc])
+    # build dot positions
+    for desc, cities in grouped.items():
+        for i, city in enumerate(cities):
+            x_vals.append(desc)
+            y_vals.append(i + 1)
+            labels.append(city)
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 7))
     plt.scatter(x_vals, y_vals)
-    plt.yticks(range(len(unique_desc)), unique_desc)
-    plt.xlabel("number of cities")
-    plt.ylabel("weather description")
-    plt.title("dot plot of weather descriptions by frequency")
+
+    # add city labels next to each dot
+    for x, y, label in zip(x_vals, y_vals, labels):
+        plt.text(
+            x,
+            y + 0.05,
+            label,
+            fontsize=8,
+            rotation=30,
+            ha="left"
+        )
+
+    plt.xlabel("weather description")
+    plt.ylabel("number of cities")
+    plt.title("dot plot of weather descriptions labeled by city")
+    plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     plt.show()
+
+
 
 
 def plot_top_10_hottest():
