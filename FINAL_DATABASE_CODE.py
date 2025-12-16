@@ -441,8 +441,6 @@ def main():
         print("WEATHER COUNT:", weather_count)
 
      
-        # optional join table
-
 
     finally:
         conn.close()

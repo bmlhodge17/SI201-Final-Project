@@ -289,18 +289,10 @@ def main():
     # Plot top 15, call networks plot
     plot_networks(countries, counts, top_n=15)
     
-    
+    #jasmines calculations
     #join table plot call
     plot_join_cost_and_gasoline(conn)
-    #Jasmines call
-    # jasmine scatter (only if table exists)
-    # conn, cur = connect_to_database()
-    # try:
-    #     plot_join_table(conn)
-    # except:
-    #     print("joined_table missing or empty")
-    # conn.close()
-
+   
     average_salary_first_25()
 
     #Asiahs calls
