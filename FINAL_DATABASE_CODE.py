@@ -430,17 +430,18 @@ def main():
 
        
         # asiah: weather api
-       
+        #get_city_weather(conn)
+
         init_weather_table(conn)
         populate_weather(conn)
         add_uv_index_column(conn)
 
-        weather_count = conn.execute(
-            "SELECT COUNT(*) FROM weather;"
-        ).fetchone()[0]
-        print("WEATHER COUNT:", weather_count)
+        # weather_count = conn.execute(
+        #     "SELECT COUNT(*) FROM weather;"
+        # ).fetchone()[0]
+        # print("WEATHER COUNT:", weather_count)
+        # optional join table
 
-     
 
     finally:
         conn.close()
